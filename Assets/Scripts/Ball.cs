@@ -44,7 +44,7 @@ public class Ball : MonoBehaviour {
 	}
 
 	public void Roll(Vector3 initialVelocity) {
-		// Just set an initial speed for now
+		// Just set an initial speed for now, will look at adding in hook later
 		inPlay = true;
 		rigidBody.useGravity = true;
 		velocity = initialVelocity;

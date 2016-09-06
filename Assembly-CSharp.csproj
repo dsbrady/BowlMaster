@@ -45,6 +45,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Classes\ScoreCard.cs" />
      <Compile Include="Assets\START Pack\Scripts\ActionMaster2.cs" />
      <Compile Include="Assets\START Pack\Scripts\OurScoreDisplayTest1.cs" />
      <Compile Include="Assets\Scripts\Ball.cs" />
@@ -54,7 +55,6 @@
      <Compile Include="Assets\Scripts\Pin.cs" />
      <Compile Include="Assets\Scripts\PinSetter.cs" />
      <Compile Include="Assets\Scripts\PinShredder.cs" />
-     <Compile Include="Assets\Scripts\ScoreKeeper.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity 5/Unity 5.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

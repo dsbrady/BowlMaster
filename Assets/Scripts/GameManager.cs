@@ -5,16 +5,21 @@ using System.Collections;
 public class GameManager : MonoBehaviour {
 
 	private Ball ball;
+	private bool ballCanBeRolled = false;
 	private Text ballText;
 	private int currentFrame;
 	private int currentGame;
 	private int currentPlayer;
-	private int currentTurnBall;
+	private int currentBall;
+	// TODO: make this 10 when ready
+	private int framesPerGame = 3;
 	private Text frameText;
 	private int numberOfPlayers;
+	private int numberOfGames;
 	private PinSetter pinSetter;
 	private Animator pinSetterAnimator;
-	private ScoreKeeper scoreKeeper;
+	private int previousPinsKnockedDown;
+	private ScoreCard scoreCard;
 	private Text scoreText;
 
 	// Use this for initialization
@@ -24,14 +29,13 @@ public class GameManager : MonoBehaviour {
 		frameText = GameObject.Find("Frame Text").GetComponent<Text>();
 		pinSetter = GameObject.FindObjectOfType<PinSetter>();
 		pinSetterAnimator = pinSetter.GetComponent<Animator>();
-		scoreKeeper = GameObject.FindObjectOfType<ScoreKeeper>();
+		scoreCard = GameObject.FindObjectOfType<ScoreCard>();
 		scoreText = GameObject.Find("Score Text").GetComponent<Text>();
-		//TODO: get number of players some other way
+		//TODO: get number of players/games some other way
 		numberOfPlayers = 1;
+		numberOfGames = 1;
 		StartSeries();
 	}
-
-	// TODO: don't allow launching the ball while tidying/resetting
 
 	// Update is called once per frame
 	void Update () {
@@ -41,51 +45,64 @@ public class GameManager : MonoBehaviour {
 	public void FinishTurn() {
 		// TODO: calculate score
 		// TODO: special case for the 10th frame
+		int pinsKnockedDown = 10 - pinSetter.CountStandingPins() - previousPinsKnockedDown;
+		previousPinsKnockedDown = 10 - pinSetter.CountStandingPins();
+/* TODO: remove
+		scoreCard.UpdateScore(currentPlayer, currentGame, currentFrame, currentBall, pinsKnockedDown);
+*/
 
 		// If it's currently the first turn, check for a strike; if it's not, just go to the next turn
-		if (currentTurnBall == 1) {
+		if (currentBall == 1) {
 			// TODO: check for a strike
 
-			currentTurnBall++;
+			currentBall++;
 			pinSetterAnimator.SetTrigger("tidy");
 			ball.Reset();
 			UpdateDisplay();
 		}
 		else {
-			currentTurnBall--;
+			currentBall--;
 			currentFrame++;
 			currentPlayer++;
-			if (currentPlayer >= numberOfPlayers) {
-				currentPlayer = 0;
+			if (currentPlayer > numberOfPlayers) {
+				currentPlayer = 1;
 			}
 			StartFrame();
 		}
 	}
 
+	public bool GetBallCanBeRolled() {
+		return ballCanBeRolled;
+	}
+
+	public void UpdateBallRollableStatus(bool canBeRolled) {
+		ballCanBeRolled = canBeRolled;
+	}
+
 	private void StartFrame() {
+		previousPinsKnockedDown = 0;
 		pinSetterAnimator.SetTrigger("reset");
 		ball.Reset();
 		UpdateDisplay();
 	}
 
 	private void StartGame() {
-		scoreKeeper.StartGame(currentGame);
-
-		currentPlayer = 0;
-		currentTurnBall = 1;
+		currentPlayer = 1;
+		currentBall = 1;
 		currentFrame = 1;
 		StartFrame();
 	}
 
 	private void StartSeries() {
-		scoreKeeper.StartSeries(numberOfPlayers);
+		// Initialize the scoreCard object, which contains all of the information about the series (games, players, scores, etc.)
+		scoreCard.Initialize(numberOfPlayers, numberOfGames, framesPerGame);
 		currentGame = 1;
 		StartGame();
 	}
 
 	private void UpdateDisplay() {
 		frameText.text = currentFrame.ToString();
-		ballText.text = currentTurnBall.ToString();
+		ballText.text = currentBall.ToString();
 		scoreText.text = "2";
 	}
 }

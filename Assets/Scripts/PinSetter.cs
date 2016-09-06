@@ -56,11 +56,12 @@ public class PinSetter : MonoBehaviour {
 
 	public void RaisePins() {
 		Vector3 pinTranslation = new Vector3(0f, raisePinHeight, 0f);
+
+		UpdateBallRollableStatus(0);
 		RaiseOrLowerPins(pinTranslation);
 	}
 
 	public void RefillPins() {
-		// TODO: remove any previous pinSet
 		if (pinSetClone) {
 			Destroy(pinSetClone);
 		}
@@ -76,6 +77,12 @@ public class PinSetter : MonoBehaviour {
 	public void LowerPins() {
 		Vector3 pinTranslation = new Vector3(0f, -raisePinHeight, 0f);
 		RaiseOrLowerPins(pinTranslation);
+		gameManager.UpdateBallRollableStatus(true);
+	}
+
+	private void UpdateBallRollableStatus(int canBeRolled) {
+		// Using an integer, because apparently animation events can't pass in boolean arguments
+		gameManager.UpdateBallRollableStatus(canBeRolled == 1);
 	}
 
 	private void UpdateStandingCount() {
