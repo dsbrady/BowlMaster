@@ -6,17 +6,19 @@ using System.Collections;
 public class DragLaunch : MonoBehaviour {
 
 	private Ball ball;
+	private GameManager gameManager;
 	private Vector3 startPosition, endPosition;
 	private float startTime, endTime;
 
 	// Use this for initialization
 	void Start () {
 		ball = GetComponent<Ball>();
+		gameManager = GameObject.FindObjectOfType<GameManager>();
 	}
 	
 	public void DragStart() {
 		// Don't do this if the ball is already rolling
-		if (!ball.inPlay) {
+		if (!ball.inPlay && gameManager.GetBallCanBeRolled()) {
 			// Capture time and position of drag start/mouse click
 			startTime = Time.time;
 			startPosition = Input.mousePosition;
@@ -24,8 +26,8 @@ public class DragLaunch : MonoBehaviour {
 	}
 
 	public void DragEnd() {
-		// Don't do this if the ball is already rolling
-		if (!ball.inPlay) {
+		// Don't do this if the ball is already rolling or the pins are being reset
+		if (!ball.inPlay && gameManager.GetBallCanBeRolled()) {
 			Vector3 positionDifference;
 			float timeDuration;
 			Vector3 launchVelocity;
