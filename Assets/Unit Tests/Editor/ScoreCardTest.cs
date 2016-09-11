@@ -279,7 +279,6 @@ public class ScoreCardTest {
 		status = scoreCard.GetCurrentStatus();
 
 		int playerNumber = (int)status["currentPlayerNumber"],
-			gameNumber = (int)status["currentGameNumber"],
 			frameNumber = (int)status["currentFrameNumber"];
 
 		Assert.AreEqual(10, frameNumber);
@@ -309,7 +308,6 @@ public class ScoreCardTest {
 		status = scoreCard.GetCurrentStatus();
 
 		int playerNumber = (int)status["currentPlayerNumber"],
-			gameNumber = (int)status["currentGameNumber"],
 			frameNumber = (int)status["currentFrameNumber"];
 
 		Assert.AreEqual(10, frameNumber);

@@ -3,7 +3,8 @@ using System.Collections;
 
 public class BallMaster : MonoBehaviour {
 
-	public bool inPlay = false;
+	public enum Status {Idle, InPlay, OutOfPlay };
+
 	public Vector3 launchVelocity;
 
 	private CameraController cameraController;
@@ -11,6 +12,7 @@ public class BallMaster : MonoBehaviour {
 	private Quaternion initialRotation;
 	private Rigidbody rigidBody;
 	private AudioSource rollingAudioSource;
+	private Status status = Status.Idle;
 	private Vector3 velocity;
 
 	void Awake() {
@@ -26,15 +28,19 @@ public class BallMaster : MonoBehaviour {
 	void Start () {
 	}
 
+	public Status GetStatus() {
+		return status;
+	}
+
 	public void NudgeStart(float amount) {
 		// Only allow this if the ball isn't rolling
-		if (!inPlay) {
+		if (status == Status.Idle) {
 			transform.Translate(new Vector3(0,0,amount));
 		}
 	}
 
 	public void Reset() {
-		inPlay = false;
+		status = Status.Idle;
 		rigidBody.useGravity = false;
 		transform.position = initialPosition;
 		transform.rotation = initialRotation;
@@ -45,11 +51,14 @@ public class BallMaster : MonoBehaviour {
 
 	public void Roll(Vector3 initialVelocity) {
 		// Just set an initial speed for now, will look at adding in hook later
-		inPlay = true;
+		status = Status.InPlay;
 		rigidBody.useGravity = true;
 		velocity = initialVelocity;
 		rollingAudioSource.Play();
 		rigidBody.velocity = velocity;
 	}
 
+	public void SetStatus(Status newStatus) {
+		status = newStatus;
+	}
 }

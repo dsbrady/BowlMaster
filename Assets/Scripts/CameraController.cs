@@ -3,23 +3,23 @@ using System.Collections;
 
 public class CameraController : MonoBehaviour {
 
-	public BallMaster ball;
+	public BallMaster ballMaster;
 	private Vector3 offset;
 
 	// Use this for initialization
 	void Start () {
-		offset = transform.position - ball.transform.position;
+		offset = transform.position - ballMaster.transform.position;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		// We want to stop the camera once the ball reaches the headpin (temporarily hard-coded to 1729)
-		if (transform.position.z < 1729f && ball.inPlay) {
-			transform.position = ball.transform.position + offset;
+		if (transform.position.z < 1729f && (ballMaster.GetStatus() == BallMaster.Status.InPlay)) {
+			transform.position = ballMaster.transform.position + offset;
 		}
 	}
 
 	public void Reset() {
-		transform.position = ball.transform.position + offset;
+		transform.position = ballMaster.transform.position + offset;
 	}
 }

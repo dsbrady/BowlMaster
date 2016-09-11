@@ -4,7 +4,7 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour {
 
-	private BallMaster ball;
+	private BallMaster ballMaster;
 	private bool ballCanBeRolled = false;
 	private Text ballText;
 	private Hashtable currentStatus;
@@ -13,19 +13,19 @@ public class GameManager : MonoBehaviour {
 	private Text frameText;
 	private int numberOfPlayers;
 	private int numberOfGames;
+	private PinCounter pinCounter;
 	private PinSetter pinSetter;
-	private Animator pinSetterAnimator;
 	private int previousPinsKnockedDown;
 	private ScoreCard scoreCard;
 	private Text scoreText;
 
 	// Use this for initialization
 	void Start () {
-		ball = GameObject.FindObjectOfType<BallMaster>();
+		ballMaster = GameObject.FindObjectOfType<BallMaster>();
 		ballText = GameObject.Find("Ball Text").GetComponent<Text>();
 		frameText = GameObject.Find("Frame Text").GetComponent<Text>();
+		pinCounter = GameObject.FindObjectOfType<PinCounter>();
 		pinSetter = GameObject.FindObjectOfType<PinSetter>();
-		pinSetterAnimator = pinSetter.GetComponent<Animator>();
 		scoreCard = new ScoreCard();
 		scoreText = GameObject.Find("Score Text").GetComponent<Text>();
 		//TODO: get number of players/games some other way
@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour {
 	public void FinishTurn() {
 		ScoreCard.Action action;
 
-		int pinsKnockedDown = 10 - pinSetter.CountStandingPins() - previousPinsKnockedDown;
+		int pinsKnockedDown = 10 - pinCounter.CountStandingPins() - previousPinsKnockedDown;
 
 		action = scoreCard.Bowl(pinsKnockedDown);
 		this.currentStatus = scoreCard.GetCurrentStatus();
@@ -50,21 +50,21 @@ public class GameManager : MonoBehaviour {
 		switch (action) {
 			case ScoreCard.Action.Tidy:
 					previousPinsKnockedDown = pinsKnockedDown;
-					pinSetterAnimator.SetTrigger("tidy");
-					ball.Reset();
+					pinSetter.Tidy();
+					ballMaster.Reset();
 				break;
 			case ScoreCard.Action.Reset:
 					previousPinsKnockedDown = 0;
-					pinSetterAnimator.SetTrigger("reset");
-					ball.Reset();
+					pinSetter.Reset();
+					ballMaster.Reset();
 				break;
 			case ScoreCard.Action.EndTurn:
 					StartFrame();
-					ball.Reset();
+					ballMaster.Reset();
 				break;
 			case ScoreCard.Action.EndGame:
 					StartGame();
-					ball.Reset();
+					ballMaster.Reset();
 				break;
 			case ScoreCard.Action.EndSeries:
 					throw new UnityException("What to do when ending a series?");
@@ -83,8 +83,8 @@ public class GameManager : MonoBehaviour {
 
 	private void StartFrame() {
 		previousPinsKnockedDown = 0;
-		pinSetterAnimator.SetTrigger("reset");
-		ball.Reset();
+		pinSetter.Reset();
+		ballMaster.Reset();
 		UpdateDisplay();
 	}
 
