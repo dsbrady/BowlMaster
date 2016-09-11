@@ -1,18 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent (typeof(Ball))]
+[RequireComponent (typeof(BallMaster))]
 
 public class DragLaunch : MonoBehaviour {
 
-	private Ball ball;
+	private BallMaster ball;
 	private GameManager gameManager;
 	private Vector3 startPosition, endPosition;
 	private float startTime, endTime;
 
 	// Use this for initialization
 	void Start () {
-		ball = GetComponent<Ball>();
+		ball = GetComponent<BallMaster>();
 		gameManager = GameObject.FindObjectOfType<GameManager>();
 	}
 	

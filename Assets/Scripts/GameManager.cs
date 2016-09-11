@@ -4,14 +4,11 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour {
 
-	private Ball ball;
+	private BallMaster ball;
 	private bool ballCanBeRolled = false;
 	private Text ballText;
-	private int currentFrame;
-	private int currentGame;
-	private int currentPlayer;
-	private int currentBall;
-	// TODO: make this 10 when ready
+	private Hashtable currentStatus;
+// TODO: make this 10 when ready
 	private int framesPerGame = 3;
 	private Text frameText;
 	private int numberOfPlayers;
@@ -19,17 +16,16 @@ public class GameManager : MonoBehaviour {
 	private PinSetter pinSetter;
 	private Animator pinSetterAnimator;
 	private int previousPinsKnockedDown;
-	private ScoreCard scoreCard;
+	private ScoreCard scoreCard = new ScoreCard();
 	private Text scoreText;
 
 	// Use this for initialization
 	void Start () {
-		ball = GameObject.FindObjectOfType<Ball>();
+		ball = GameObject.FindObjectOfType<BallMaster>();
 		ballText = GameObject.Find("Ball Text").GetComponent<Text>();
 		frameText = GameObject.Find("Frame Text").GetComponent<Text>();
 		pinSetter = GameObject.FindObjectOfType<PinSetter>();
 		pinSetterAnimator = pinSetter.GetComponent<Animator>();
-		scoreCard = GameObject.FindObjectOfType<ScoreCard>();
 		scoreText = GameObject.Find("Score Text").GetComponent<Text>();
 		//TODO: get number of players/games some other way
 		numberOfPlayers = 1;
@@ -43,32 +39,37 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void FinishTurn() {
-		// TODO: calculate score
-		// TODO: special case for the 10th frame
+		ScoreCard.Action action;
+
 		int pinsKnockedDown = 10 - pinSetter.CountStandingPins() - previousPinsKnockedDown;
-		previousPinsKnockedDown = 10 - pinSetter.CountStandingPins();
-/* TODO: remove
-		scoreCard.UpdateScore(currentPlayer, currentGame, currentFrame, currentBall, pinsKnockedDown);
-*/
 
-		// If it's currently the first turn, check for a strike; if it's not, just go to the next turn
-		if (currentBall == 1) {
-			// TODO: check for a strike
+		action = scoreCard.Bowl(pinsKnockedDown);
+		this.currentStatus = scoreCard.GetCurrentStatus();
 
-			currentBall++;
-			pinSetterAnimator.SetTrigger("tidy");
-			ball.Reset();
-			UpdateDisplay();
+		switch (action) {
+			case ScoreCard.Action.Tidy:
+					previousPinsKnockedDown = pinsKnockedDown;
+					pinSetterAnimator.SetTrigger("tidy");
+					ball.Reset();
+				break;
+			case ScoreCard.Action.Reset:
+					previousPinsKnockedDown = 0;
+					pinSetterAnimator.SetTrigger("reset");
+					ball.Reset();
+				break;
+			case ScoreCard.Action.EndTurn:
+					StartFrame();
+					ball.Reset();
+				break;
+			case ScoreCard.Action.EndGame:
+					StartGame();
+					ball.Reset();
+				break;
+			case ScoreCard.Action.EndSeries:
+					throw new UnityException("What to do when ending a series?");
+				break;
 		}
-		else {
-			currentBall--;
-			currentFrame++;
-			currentPlayer++;
-			if (currentPlayer > numberOfPlayers) {
-				currentPlayer = 1;
-			}
-			StartFrame();
-		}
+		UpdateDisplay();
 	}
 
 	public bool GetBallCanBeRolled() {
@@ -87,22 +88,19 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void StartGame() {
-		currentPlayer = 1;
-		currentBall = 1;
-		currentFrame = 1;
+		this.currentStatus = scoreCard.GetCurrentStatus();
 		StartFrame();
 	}
 
 	private void StartSeries() {
 		// Initialize the scoreCard object, which contains all of the information about the series (games, players, scores, etc.)
 		scoreCard.Initialize(numberOfPlayers, numberOfGames, framesPerGame);
-		currentGame = 1;
 		StartGame();
 	}
 
 	private void UpdateDisplay() {
-		frameText.text = currentFrame.ToString();
-		ballText.text = currentBall.ToString();
+		frameText.text = this.currentStatus["currentFrameNumber"].ToString();
+		ballText.text = this.currentStatus["currentBallNumber"].ToString();
 		scoreText.text = "2";
 	}
 }

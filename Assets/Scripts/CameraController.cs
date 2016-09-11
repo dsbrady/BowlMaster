@@ -3,7 +3,7 @@ using System.Collections;
 
 public class CameraController : MonoBehaviour {
 
-	public Ball ball;
+	public BallMaster ball;
 	private Vector3 offset;
 
 	// Use this for initialization

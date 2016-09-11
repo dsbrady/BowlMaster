@@ -7,7 +7,7 @@ public class PinSetter : MonoBehaviour {
 	public GameObject pinSet;
 	public Text standingPinCount;
 
-	private bool ballEnteredBox = false;
+	private bool ballOutOfPlay = false;
 	private GameManager gameManager;
 	private int lastStandingCount = -1;
 	private float lastChangeTime;
@@ -24,16 +24,9 @@ public class PinSetter : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (ballEnteredBox) {
-			UpdateStandingCount();
-		}
-	}
-
-	void OnTriggerEnter(Collider collider) {
-		// We only care if the collider is the ball
-		if (collider.GetComponent<Ball>()) {
-			ballEnteredBox = true;
+		if (ballOutOfPlay) {
 			standingPinCount.color = Color.red;
+			UpdateStandingCount();
 		}
 	}
 
@@ -52,6 +45,12 @@ public class PinSetter : MonoBehaviour {
 		}
 
 		return standingPinCount;
+	}
+
+	public void LowerPins() {
+		Vector3 pinTranslation = new Vector3(0f, -raisePinHeight, 0f);
+		RaiseOrLowerPins(pinTranslation);
+		gameManager.UpdateBallRollableStatus(true);
 	}
 
 	public void RaisePins() {
@@ -74,10 +73,8 @@ public class PinSetter : MonoBehaviour {
 		RaiseOrLowerPins(pinTranslation);
 	}
 
-	public void LowerPins() {
-		Vector3 pinTranslation = new Vector3(0f, -raisePinHeight, 0f);
-		RaiseOrLowerPins(pinTranslation);
-		gameManager.UpdateBallRollableStatus(true);
+	public void SetBallOutOfPlay(bool isOutOfPlay) {
+		this.ballOutOfPlay = isOutOfPlay;
 	}
 
 	private void UpdateBallRollableStatus(int canBeRolled) {
@@ -106,7 +103,7 @@ public class PinSetter : MonoBehaviour {
 	private void PinsHaveSettled() {
 		gameManager.FinishTurn();
 		lastStandingCount = -1;
-		ballEnteredBox = false;
+		ballOutOfPlay = false;
 		standingPinCount.color = Color.green;
 	}
 

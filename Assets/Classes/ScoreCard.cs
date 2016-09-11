@@ -1,210 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
-
-public class ScoreCard : MonoBehaviour {
-	public class Player {
-		public class Game {
-			public class Frame {
-				public class Ball {
-					private bool isSpare = false;
-					private bool isStrike = false;
-					private int pinsKnockedDown = 0;
-
-					// TODO: can we refactor these using enums?
-					public bool GetIsSpare() {
-						return isSpare;
-					}
-
-					public bool GetIsStrike() {
-						return isStrike;
-					}
-
-					public int GetPinsKnockedDown() {
-						return pinsKnockedDown;
-					}
-
-					public void SetIsSpare(bool spareStatus) {
-						isSpare = spareStatus;
-					}
-
-					public void SetIsStrike(bool strikeStatus) {
-						isStrike = strikeStatus;
-					}
-
-					public void SetPinsKnockedDown(int pinCount) {
-						pinsKnockedDown = pinCount;
-					}
-				}
-				private Ball[] balls;
-				private int score = -1; // flag of -1 so that if the frame has a spare or a strike, the score doesn't show yet
-
-				public Frame(int frameNumber, int framesPerGame) {
-					if (frameNumber == (framesPerGame)) {
-						balls = new Ball[3];
-					}
-					else {
-						balls = new Ball[2];
-					}
-
-					// Create the first ball
-					balls[0] = new Ball();
-				}
-
-				public Ball GetBall(int ballNumber) {
-					return balls[ballNumber - 1];
-				}
-
-				public Ball[] GetBalls() {
-					return balls;
-				}
-
-				public int GetScore() {
-					return score;
-				}
-
-				public void SetNextBall(int ballNumber) {
-					balls[ballNumber - 1] = new Ball();
-				}
-
-				public void SetScore(int frameScore) {
-					score = frameScore;
-				}
-
-				public string ToString(int frameNumber) {
-					string returnString = "\n\t\t\tFrame " + (frameNumber + 1) + ":";
-
-					returnString += "\n\t\t\t\tScore: " + this.score;
-
-					for (int ballCount = 0; ballCount < this.balls.Length; ++ ballCount) {
-						if (balls[ballCount] is Ball) {
-							returnString += "\n\t\t\t\tBall: " + (ballCount + 1) + ": " + this.balls[ballCount].GetPinsKnockedDown();
-							if (balls[ballCount].GetIsStrike()) {
-								returnString += " STRIKE!!";
-							}
-							else if (balls[ballCount].GetIsSpare()) {
-								returnString += " Spare!!";
-							}
-
-						}
-					}
-
-					return returnString;
-				}
-			}
-
-			private int score = -1;
-			private Frame[] frames;
-
-			public Game(int framesPerGame) {
-				frames = new Frame[framesPerGame];
-
-				// Create the first frame
-				frames[0] = new Frame(0, framesPerGame);
-			}
-
-			public Frame[] GetFrames() {
-				return frames;
-			}
-
-			public Frame GetFrame(int frameNumber) {
-				if (frameNumber > frames.Length) {
-					throw new UnityException("Invalid frame number");
-				}
-
-				return frames[frameNumber - 1];
-			}
-
-			public int GetScore() {
-				return score;
-			}
-
-			public void SetNextFrame(int frameNumber, int framesPerGame) {
-				frames[frameNumber - 1] = new Frame(frameNumber, framesPerGame);
-			}
-
-			public void SetScore(int gameScore) {
-				score = gameScore;
-			}
-
-			public string ToString(int gameNumber) {
-				string returnString = "\n\t\tGame " + (gameNumber + 1) + ": ";;
-				Frame frame;
-
-				returnString += "\n\t\t\tScore: " + this.score;
-				for (int frameCount = 0; frameCount < this.frames.Length; ++frameCount) {
-					frame = this.frames[frameCount];
-					if (frame is Frame) {
-						returnString += frame.ToString(frameCount);
-					}
-				}
-
-				return returnString;
-			}
-		}
-
-		private Game[] games;
-		private string name;
-		private int score = -1;
-
-		public Player(int numberOfGames, int framesPerGame) {
-			games = new Game[numberOfGames];
-
-			// TODO: get the player's name
-			name = "Bob Smith";
-
-			// Create the first game
-			games[0] = new Game(framesPerGame);
-		}
-
-		public Game GetGame(int gameNumber) {
-			if (gameNumber > games.Length) {
-				throw new UnityException("Invalid game number");
-			}
-
-			return games[gameNumber - 1];
-		}
-
-		public Game[] GetGames() {
-			return games;
-		}
-
-		public string GetName() {
-			return name;
-		}
-
-		public int GetScore() {
-			return score;
-		}
-
-		public void SetNextGame(int gameNumber, int framesPerGame) {
-			games[gameNumber - 1] = new Game(framesPerGame);
-		}
-
-		public void SetScore(int seriesScore) {
-			score = seriesScore;
-		}
-
-		public string ToString (int playerNumber)
-		{
-			string returnString = "\n\tPlayer " + (playerNumber + 1) + ":";
-			Game game;
-
-			returnString += "\n\t\tSeries Score: " + this.score;
-			for (int gameCount = 0; gameCount < this.games.Length; ++gameCount) {
-				game = this.games[gameCount];
-				if (game is Game) {
-					returnString += game.ToString(gameCount);
-				}
-			}
-
-			return returnString;
-		}
-
-	}
-
-	public enum Action {Tidy, Reset, EndTurn, EndGame, EndSeries, None};
+// TODO: make the frame.balls be a List<Ball> instead of an array?
+// TODO: make a separate class for determining the actual scores?  (ScoreMaster?)
+// TODO: separate scoreDisplay class?
+// TODO: break up the ScoreCardTest?
+public class ScoreCard {
+	public enum Action {EndGame, EndSeries, EndTurn, Reset, Tidy, None};
+	public enum BallResult {Gutter, Spare, Split, Strike, Turkey, TwoInRow, None};
 
 	private Action currentAction = Action.None;
+	private BallResult ballResult = BallResult.None;
 
 	private int currentGameNumber, currentPlayerNumber, currentFrameNumber, currentBallNumber, numberOfGames, numberOfPlayers, framesPerGame;
 	private Player[] players;
@@ -218,7 +23,7 @@ public class ScoreCard : MonoBehaviour {
 		this.currentAction = Action.None;
 
 		// Get the current player's frame
-		Player.Game.Frame playerFrame = GetCurrentPlayerFrame()["frame"] as Player.Game.Frame;
+		Frame playerFrame = GetCurrentPlayerFrame()["frame"] as Frame;
 
 		// Set the pins knocked down in this turn
 		GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrame(this.currentFrameNumber).GetBall(this.currentBallNumber).SetPinsKnockedDown(pinsKnockedDown);
@@ -241,17 +46,27 @@ public class ScoreCard : MonoBehaviour {
 			}
 		}
 
-
 		/* ********************** Last Frame ************************ */
 		else if (this.currentFrameNumber == this.framesPerGame) {
 			// Third ball, so just end the turn
 			if (this.currentBallNumber == 3) {
+				Ball lastBall = GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrame(this.currentFrameNumber).GetBall(1);
+
+				// If the last ball was a strike or a spare, and we knocked down 10 pins, set this as a strike
+				if ((lastBall.GetIsSpare() || lastBall.GetIsStrike()) && pinsKnockedDown == 10) {
+					GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrame(this.currentFrameNumber).GetBall(this.currentBallNumber).SetIsStrike(true);
+				}
+				// Else if we knocked down 10 pins, set this as a spare
+				else if (pinsKnockedDown == 10) {
+					GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrame(this.currentFrameNumber).GetBall(this.currentBallNumber).SetIsSpare(true);
+				}
+
 				this.currentAction = Action.EndTurn;
 			}
 			// Second ball, look to see what we want to do
 			else if (this.currentBallNumber == 2) {
 				// First ball wasn't a strike, and this ball isn't a strike or a spare --> end the turn
-				Player.Game.Frame.Ball lastBall = GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrame(this.currentFrameNumber).GetBall(1);
+				Ball lastBall = GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrame(this.currentFrameNumber).GetBall(1);
 				if (!lastBall.GetIsStrike() && (lastBall.GetPinsKnockedDown() + pinsKnockedDown) != 10) {
 					this.currentAction = Action.EndTurn;
 				}
@@ -277,6 +92,9 @@ public class ScoreCard : MonoBehaviour {
 			}
 		}
 
+		// Determine the ball result (strike, spare, turkey, etc.)
+		this.ballResult = DetermineBallResult();
+
 		// Calculate scores
 		CalculateBallScore();
 		CalculateGameScore();
@@ -297,15 +115,19 @@ public class ScoreCard : MonoBehaviour {
 		return this.currentAction;
 	}
 
+	public BallResult GetBallResult() {
+		return this.ballResult;
+	}
+
 	public Hashtable GetCurrentPlayerFrame() {
 		Hashtable playerFrame = new Hashtable();
-		Player currentPlayer = GetPlayer(currentPlayerNumber);
-		Player.Game.Frame currentFrame = currentPlayer.GetGame(currentGameNumber).GetFrame(currentFrameNumber);
+		Player currentPlayer = GetPlayer(this.currentPlayerNumber);
+		Frame currentFrame = currentPlayer.GetGame(currentGameNumber).GetFrame(currentFrameNumber);
 
 		playerFrame["playerName"] = currentPlayer.GetName();
-		playerFrame["playerNumber"] = currentPlayerNumber;
-		playerFrame["gameNumber"] = currentGameNumber;
-		playerFrame["frameNumber"] = currentFrameNumber;
+		playerFrame["playerNumber"] = this.currentPlayerNumber;
+		playerFrame["gameNumber"] = this.currentGameNumber;
+		playerFrame["frameNumber"] = this.currentFrameNumber;
 		playerFrame["frame"] = currentFrame;
 
 		return playerFrame;
@@ -365,11 +187,11 @@ public class ScoreCard : MonoBehaviour {
 	}
 
 	private void CalculateBallScore() {
-		Player.Game.Frame thisFrame = GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrame(this.currentFrameNumber);
-		Player.Game.Frame lastFrame = null;
-		Player.Game.Frame nextToLastFrame = null;
-		Player.Game.Frame.Ball thisBall = GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrame(this.currentFrameNumber).GetBall(this.currentBallNumber);
-		Player.Game.Frame.Ball lastBall = null;
+		Frame thisFrame = GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrame(this.currentFrameNumber);
+		Frame lastFrame = null;
+		Frame nextToLastFrame = null;
+		Ball thisBall = GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrame(this.currentFrameNumber).GetBall(this.currentBallNumber);
+		Ball lastBall = null;
 		int pinsKnockedDown = thisBall.GetPinsKnockedDown();
 
 		if (this.currentFrameNumber >= 2) {
@@ -382,7 +204,7 @@ public class ScoreCard : MonoBehaviour {
 		// If it's the first ball, look for spares/strikes in previous frames
 		if (this.currentBallNumber == 1 && this.currentFrameNumber >= 2) {
 			// If the last frame was a spare, calculate this frame - 1
-			if (lastFrame.GetBall(2) is Player.Game.Frame.Ball && lastFrame.GetBall(2).GetIsSpare()) {
+			if (lastFrame.GetBall(2) is Ball && lastFrame.GetBall(2).GetIsSpare()) {
 				lastFrame.SetScore(10 + pinsKnockedDown);
 			}
 			// If the last two frames were strikes (and it's the third frame or higher), calculate this frame - 2
@@ -411,18 +233,19 @@ public class ScoreCard : MonoBehaviour {
 
 		// If it's the third ball of the last frame, calculate this frame
 		if (this.currentBallNumber == 3) {
-			Player.Game.Frame.Ball nextToLastBall = thisFrame.GetBall(1);
+			Ball nextToLastBall = thisFrame.GetBall(1);
 			lastBall = thisFrame.GetBall(2);
+
 			thisFrame.SetScore(nextToLastBall.GetPinsKnockedDown() + lastBall.GetPinsKnockedDown() + pinsKnockedDown);
 		}
 	}
 
 	private void CalculateGameScore() {
 		// Go through each frame of this player's current game and set the score
-		Player.Game.Frame[] frames = GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrames();
+		Frame[] frames = GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrames();
 		int runningScore = 0;
 
-		foreach (Player.Game.Frame frame in frames) {
+		foreach (Frame frame in frames) {
 			if (frame != null && frame.GetScore() != -1) {
 				runningScore += frame.GetScore();
 			}
@@ -433,10 +256,10 @@ public class ScoreCard : MonoBehaviour {
 
 	private void CalculateSeriesScore() {
 		// Go through each game of this player's series and set the score
-		Player.Game[] games = GetPlayer(this.currentPlayerNumber).GetGames();
+		Game[] games = GetPlayer(this.currentPlayerNumber).GetGames();
 		int runningScore = 0;
 
-		foreach (Player.Game game in games) {
+		foreach (Game game in games) {
 			if (game != null && game.GetScore() != -1) {
 				runningScore += game.GetScore();
 			}
@@ -444,6 +267,71 @@ public class ScoreCard : MonoBehaviour {
 
 		GetPlayer(this.currentPlayerNumber).SetScore(runningScore);
 
+	}
+
+	private BallResult DetermineBallResult() {
+		BallResult result = BallResult.None;
+		Ball ball = GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrame(this.currentFrameNumber).GetBall(this.currentBallNumber);
+		Ball previousBall, previousPreviousBall ;
+
+		// First, just see if the current ball is a spare
+		if (ball.GetIsSpare()) {
+			result = BallResult.Spare;
+		}
+		// Now, see if it's a strike
+		else if (ball.GetIsStrike()) {
+			// Handle the last frame balls 2 or 3 first
+			if (this.currentFrameNumber == this.framesPerGame && this.currentBallNumber > 1) {
+				previousBall = GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrame(this.currentFrameNumber).GetBall(this.currentBallNumber - 1);
+				if (previousBall.GetIsStrike()) {
+					// We need to check for a turkey, but keeping in mind that if this is ball 2, we have to look back at the previous frame, but if it's ball 3, we can just look at the first ball of this frame
+					if (this.currentBallNumber == 2) {
+						previousPreviousBall = GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrame(this.currentFrameNumber - 1).GetBall(1);
+					}
+					else {
+						previousPreviousBall = GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrame(this.currentFrameNumber).GetBall(1);
+					}
+
+					if (previousPreviousBall.GetIsStrike()) {
+						result = BallResult.Turkey;
+					}
+					else {
+						result = BallResult.TwoInRow;
+					}
+				}
+			}
+			else if (this.currentFrameNumber >= 2) {
+				// Get the first ball of the previous frame
+				previousBall = GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrame(this.currentFrameNumber - 1).GetBall(1);
+				if (previousBall.GetIsStrike()) {
+					// We need to check the frame before the previous frame if we're in the third frame or higher
+					if (this.currentFrameNumber >= 3) {
+						previousPreviousBall = GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrame(this.currentFrameNumber - 2).GetBall(1);
+						if (previousPreviousBall.GetIsStrike()) {
+							result = BallResult.Turkey;
+						}
+						else {
+							result = BallResult.TwoInRow;
+						}
+					}
+					else {
+						result = BallResult.TwoInRow;
+					}
+				}
+				else {
+					result = BallResult.Strike;
+				}
+			}
+			else {
+				result = BallResult.Strike;
+			}
+		}
+		else {
+			// TODO: check for gutter or split -- gutter should probably just be a flag that gets set on the ball and is triggered when entering the gutter and 0 pins are knocked down;  
+			// split will require making sure it's the first ball and seeing what pins are still standing
+		}
+
+		return result;
 	}
 
 	private Action EndBowl() {

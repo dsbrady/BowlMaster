@@ -11,6 +11,10 @@ public class ScoreCardTest {
 	private ScoreCard.Action endTurn = ScoreCard.Action.EndTurn;
 	private ScoreCard.Action reset = ScoreCard.Action.Reset;
 	private ScoreCard.Action tidy = ScoreCard.Action.Tidy;
+	private ScoreCard.BallResult spare = ScoreCard.BallResult.Spare;
+	private ScoreCard.BallResult strike = ScoreCard.BallResult.Strike;
+	private ScoreCard.BallResult twoInRow = ScoreCard.BallResult.TwoInRow;
+	private ScoreCard.BallResult turkey = ScoreCard.BallResult.Turkey;
 
 	private int numberOfPlayers, numberOfGames, framesPerGame;
 	private List<string> playerNames;
@@ -50,7 +54,7 @@ public class ScoreCardTest {
 		Assert.IsNotNull(currentPlayerFrame["frameNumber"]);
 		Assert.AreEqual(1,currentPlayerFrame["frameNumber"]);
 		Assert.IsNotNull(currentPlayerFrame["frame"]);
-		Assert.IsInstanceOf<ScoreCard.Player.Game.Frame>(currentPlayerFrame["frame"]);
+		Assert.IsInstanceOf<Frame>(currentPlayerFrame["frame"]);
 	}
 
 	// Make sure you can take a turn and get an action back
@@ -620,5 +624,163 @@ public class ScoreCardTest {
 		Assert.AreEqual(90,scoreCard.GetPlayer(1).GetScore());
 		Assert.AreEqual(90,scoreCard.GetPlayer(2).GetScore());
 	}
+
+	// Does a strike report as a strike?
+	[Test]
+	public void T36_StrikeReportsStrike() {
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+
+		// Bowl a strike
+		scoreCard.Bowl(10);
+
+		Assert.AreEqual(strike, scoreCard.GetBallResult());
+	}
+
+	// Does a spare report as a spare?
+	[Test]
+	public void T37_SpareReportsSpare() {
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+
+		// Bowl a spare
+		scoreCard.Bowl(3);
+		scoreCard.Bowl(7);
+
+		Assert.AreEqual(spare, scoreCard.GetBallResult());
+	}
+
+	// Do two strikes in a row report correctly?
+	[Test]
+	public void T38_TwoStrikesInARow() {
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+
+		// Bowl 2 strikes
+		scoreCard.Bowl(10);
+		scoreCard.Bowl(10);
+
+		Assert.AreEqual(twoInRow, scoreCard.GetBallResult());
+	}
+
+	// Do three strikes in a row return turkey?
+	[Test]
+	public void T39_Turkey() {
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+
+		// Bowl 3 strikes
+		scoreCard.Bowl(10);
+		scoreCard.Bowl(10);
+		scoreCard.Bowl(10);
+
+		Assert.AreEqual(turkey, scoreCard.GetBallResult());
+	}
+
+	// First ball of last frame strike
+	[Test]
+	public void T40_FirstBallLastFrameStrike() {
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+
+		// Bowl first 9 frames as non-strikes
+		for (int i = 1; i <= 18; ++i) {
+			scoreCard.Bowl(1);
+		}
+
+		// Now bowl a strike
+		scoreCard.Bowl(10);
+
+		Assert.AreEqual(strike, scoreCard.GetBallResult());
+	}
+
+	// First ball of last frame two in a row
+	[Test]
+	public void T41_FirstBallLastFrameTwoInRow() {
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+
+		// Bowl first 8 frames as non-strikes
+		for (int i = 1; i <= 16; ++i) {
+			scoreCard.Bowl(1);
+		}
+
+		// Now bowl 2 strikes
+		scoreCard.Bowl(10);
+		scoreCard.Bowl(10);
+
+		Assert.AreEqual(twoInRow, scoreCard.GetBallResult());
+	}
+
+	// First ball of last frame turkey 
+	[Test]
+	public void T42_FirstBallLastFrameTurkey() {
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+
+		// Bowl first 7 frames as non-strikes
+		for (int i = 1; i <= 14; ++i) {
+			scoreCard.Bowl(1);
+		}
+
+		// Now bowl 3 strikes
+		scoreCard.Bowl(10);
+		scoreCard.Bowl(10);
+		scoreCard.Bowl(10);
+
+		Assert.AreEqual(turkey, scoreCard.GetBallResult());
+	}
+
+	// Second ball of last frame two in a row
+	[Test]
+	public void T43_SecondBallLastFrameTwoInRow() {
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+
+		// Bowl first 9 frames as non-strikes
+		for (int i = 1; i <= 18; ++i) {
+			scoreCard.Bowl(1);
+		}
+
+		// Now bowl 2 strikes
+		scoreCard.Bowl(10);
+		scoreCard.Bowl(10);
+
+		Assert.AreEqual(twoInRow, scoreCard.GetBallResult());
+	}
+
+	// Second ball of last frame turkey
+	[Test]
+	public void T44_SecondBallLastFrameTurkey() {
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+
+		// Bowl first 8 frames as non-strikes
+		for (int i = 1; i <= 16; ++i) {
+			scoreCard.Bowl(1);
+		}
+
+		// Now bowl 3 strikes
+		scoreCard.Bowl(10);
+		scoreCard.Bowl(10);
+		scoreCard.Bowl(10);
+
+		Assert.AreEqual(turkey, scoreCard.GetBallResult());
+	}
+
+	// Third ball of last frame turkey
+	[Test]
+	public void T45_ThirdBallLastFrameTurkey() {
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+
+		// Bowl first 9 frames as non-strikes
+		for (int i = 1; i <= 18; ++i) {
+			scoreCard.Bowl(1);
+		}
+
+		// Now bowl 3 strikes
+		scoreCard.Bowl(10);
+		scoreCard.Bowl(10);
+		scoreCard.Bowl(10);
+
+		Assert.AreEqual(turkey, scoreCard.GetBallResult());
+	}
+
+// TODO:  No ability to check for these yet
+
+	// Does a gutter return a gutter?
+
+	// Does a split return a split?
 
 }
