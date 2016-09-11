@@ -25,5 +25,6 @@ public class Pin : MonoBehaviour {
 		rigidBody.useGravity = enableGravity;
 		rigidBody.velocity = Vector3.zero;
 		rigidBody.angularVelocity = Vector3.zero;
+		transform.rotation = Quaternion.Euler(270f, 0f, 0f);
 	}
 }

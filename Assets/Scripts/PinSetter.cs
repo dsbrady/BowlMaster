@@ -77,6 +77,22 @@ public class PinSetter : MonoBehaviour {
 		this.ballOutOfPlay = isOutOfPlay;
 	}
 
+	private void PinsHaveSettled() {
+		gameManager.FinishTurn();
+		lastStandingCount = -1;
+		ballOutOfPlay = false;
+		standingPinCount.color = Color.green;
+	}
+
+	private void RaiseOrLowerPins(Vector3 pinTranslation) {
+		foreach(Pin pin in pins) {
+			if (pin && !pin.hasFallen && pin.IsStanding()) {
+				pin.transform.Translate(pinTranslation, Space.World);
+				pin.Settle((pinTranslation.y < 0f));
+			}
+		}
+	}
+
 	private void UpdateBallRollableStatus(int canBeRolled) {
 		// Using an integer, because apparently animation events can't pass in boolean arguments
 		gameManager.UpdateBallRollableStatus(canBeRolled == 1);
@@ -98,21 +114,5 @@ public class PinSetter : MonoBehaviour {
 		}
 
 		return;
-	}
-
-	private void PinsHaveSettled() {
-		gameManager.FinishTurn();
-		lastStandingCount = -1;
-		ballOutOfPlay = false;
-		standingPinCount.color = Color.green;
-	}
-
-	private void RaiseOrLowerPins(Vector3 pinTranslation) {
-		foreach(Pin pin in pins) {
-			if (pin && !pin.hasFallen && pin.IsStanding()) {
-				pin.transform.Translate(pinTranslation, Space.World);
-				pin.Settle((pinTranslation.y < 0f));
-			}
-		}
 	}
 }

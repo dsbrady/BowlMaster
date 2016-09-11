@@ -29,7 +29,7 @@ public class BallMaster : MonoBehaviour {
 	public void NudgeStart(float amount) {
 		// Only allow this if the ball isn't rolling
 		if (!inPlay) {
-			transform.Translate(new Vector3(amount, 0,0));
+			transform.Translate(new Vector3(0,0,amount));
 		}
 	}
 
