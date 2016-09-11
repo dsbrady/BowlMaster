@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-// TODO: make the frame.balls be a List<Ball> instead of an array?
+
 // TODO: make a separate class for determining the actual scores?  (ScoreMaster?)
 // TODO: separate scoreDisplay class?
 // TODO: break up the ScoreCardTest?
@@ -204,11 +204,12 @@ public class ScoreCard {
 		// If it's the first ball, look for spares/strikes in previous frames
 		if (this.currentBallNumber == 1 && this.currentFrameNumber >= 2) {
 			// If the last frame was a spare, calculate this frame - 1
-			if (lastFrame.GetBall(2) is Ball && lastFrame.GetBall(2).GetIsSpare()) {
+			lastBall = lastFrame.GetLastBall();
+			if (lastBall.GetIsSpare()) {
 				lastFrame.SetScore(10 + pinsKnockedDown);
 			}
 			// If the last two frames were strikes (and it's the third frame or higher), calculate this frame - 2
-			else if (this.currentFrameNumber >= 3 && lastFrame.GetBall(1).GetIsStrike() && nextToLastFrame.GetBall(1).GetIsStrike()) {
+			else if (this.currentFrameNumber >= 3 && lastBall.GetIsStrike() && nextToLastFrame.GetLastBall().GetIsStrike()) {
 				nextToLastFrame.SetScore(20 + pinsKnockedDown);
 			}
 		}
@@ -339,7 +340,7 @@ public class ScoreCard {
 			case Action.Tidy:
 				// If it's a tidy, all we do is increment the ball number and add a ball
 				this.currentBallNumber++;
-				GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrame(this.currentFrameNumber).SetNextBall(this.currentBallNumber);
+				GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrame(this.currentFrameNumber).SetNextBall();
 
 				break;
 			case Action.EndTurn:
@@ -380,7 +381,7 @@ public class ScoreCard {
 			case Action.Reset:
 				// If it's a reset, all we do is increment the ball number and add a ball
 				this.currentBallNumber++;
-				GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrame(this.currentFrameNumber).SetNextBall(this.currentBallNumber);
+				GetPlayer(this.currentPlayerNumber).GetGame(this.currentGameNumber).GetFrame(this.currentFrameNumber).SetNextBall();
 				break;
 			default:
 				throw new UnityException("No valid action in EndTurn(): " + this.currentAction.ToString());

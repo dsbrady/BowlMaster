@@ -39,7 +39,8 @@ public class ScoreCardTest {
 		Assert.AreEqual(numberOfPlayers, scoreCard.GetPlayers().Length);
 		Assert.AreEqual(numberOfGames, scoreCard.GetPlayer(1).GetGames().Length);
 		Assert.AreEqual(framesPerGame, scoreCard.GetPlayer(1).GetGame(1).GetFrames().Length);
-		Assert.AreEqual(2, scoreCard.GetPlayer(1).GetGame(1).GetFrame(1).GetBalls().Length);
+		// We add the balls dynamically, so should only be 1 ball right now
+		Assert.AreEqual(1, scoreCard.GetPlayer(1).GetGame(1).GetFrame(1).GetBalls().Count);
 	}
 
 	// Can we get the current player's current frame

@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour {
 	private PinSetter pinSetter;
 	private Animator pinSetterAnimator;
 	private int previousPinsKnockedDown;
-	private ScoreCard scoreCard = new ScoreCard();
+	private ScoreCard scoreCard;
 	private Text scoreText;
 
 	// Use this for initialization
@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour {
 		frameText = GameObject.Find("Frame Text").GetComponent<Text>();
 		pinSetter = GameObject.FindObjectOfType<PinSetter>();
 		pinSetterAnimator = pinSetter.GetComponent<Animator>();
+		scoreCard = new ScoreCard();
 		scoreText = GameObject.Find("Score Text").GetComponent<Text>();
 		//TODO: get number of players/games some other way
 		numberOfPlayers = 1;
