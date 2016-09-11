@@ -27,6 +27,14 @@ public class PinCounter : MonoBehaviour {
 		}
 	}
 
+	void OnTriggerExit(Collider collider) {
+		// Make sure it's the ball that's leaving
+		if (collider.GetComponent<BallMaster>()) {
+			// We want to update the ball's status
+			ballMaster.SetStatus(BallMaster.Status.OutOfPlay);
+		}
+	}
+
 	public int CountStandingPins() {
 		int standingPinCount = 0;
 

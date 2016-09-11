@@ -56,7 +56,6 @@
      <Compile Include="Assets\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\DragLaunch.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
-     <Compile Include="Assets\Scripts\LaneBox.cs" />
      <Compile Include="Assets\Scripts\Pin.cs" />
      <Compile Include="Assets\Scripts\PinCounter.cs" />
      <Compile Include="Assets\Scripts\PinSetter.cs" />

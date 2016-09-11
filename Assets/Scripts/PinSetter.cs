@@ -19,8 +19,8 @@ public class PinSetter : MonoBehaviour {
 
 	void Start () {
 		gameManager = GameObject.FindObjectOfType<GameManager>();
-		pins = GameObject.FindObjectsOfType<Pin>();
 		pinCounter = GameObject.FindObjectOfType<PinCounter>();
+		pins = GameObject.FindObjectsOfType<Pin>();
 	}
 
 	public void LowerPins() {

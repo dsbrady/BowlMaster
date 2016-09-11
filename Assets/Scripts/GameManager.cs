@@ -102,6 +102,7 @@ public class GameManager : MonoBehaviour {
 	private void UpdateDisplay() {
 		frameText.text = this.currentStatus["currentFrameNumber"].ToString();
 		ballText.text = this.currentStatus["currentBallNumber"].ToString();
-		scoreText.text = "2";
+		// TODO: fix this
+		scoreText.text = scoreCard.GetPlayer(1).GetGame(1).GetScore().ToString();
 	}
 }
