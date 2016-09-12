@@ -34,6 +34,7 @@ public class ScoreCardTest {
 
 	// Make sure game was initialized properly
 	[Test]
+	[Category("Initial")]
 	public void T01_InitializeSeries() {
 		scoreCard.Initialize(numberOfPlayers, numberOfGames, framesPerGame);
 		Assert.AreEqual(numberOfPlayers, scoreCard.GetPlayers().Length);
@@ -45,6 +46,7 @@ public class ScoreCardTest {
 
 	// Can we get the current player's current frame
 	[Test]
+	[Category("Initial")]
 	public void T02_GetCurrentFrame() {
 		scoreCard.Initialize(numberOfPlayers, numberOfGames, framesPerGame);
 		Assert.IsInstanceOf<Hashtable>(scoreCard.GetCurrentPlayerFrame());
@@ -60,6 +62,7 @@ public class ScoreCardTest {
 
 	// Make sure you can take a turn and get an action back
 	[Test]
+	[Category("Actions")]
 	public void T03_Bowl() {
 		scoreCard.Initialize(numberOfPlayers, numberOfGames, framesPerGame);
 		Assert.IsInstanceOf<ScoreCard.Action>(scoreCard.Bowl(3));
@@ -68,6 +71,7 @@ public class ScoreCardTest {
 
 	// It's the first ball and they don't throw a strike
 	[Test]
+	[Category("Actions")]
 	public void T04_FirstBallNonStrikeTidies() {
 		scoreCard.Initialize(numberOfPlayers, numberOfGames, framesPerGame);
 		Assert.AreEqual(tidy, scoreCard.Bowl(3));
@@ -75,6 +79,7 @@ public class ScoreCardTest {
 
 	// Strike in the non-last frame
 	[Test]
+	[Category("Actions")]
 	public void T05_StrikeNotLastFrameEndsTurn() {
 		scoreCard.Initialize(numberOfPlayers, numberOfGames, framesPerGame);
 		Assert.AreEqual(endTurn, scoreCard.Bowl(10));
@@ -82,6 +87,7 @@ public class ScoreCardTest {
 
 	// Second ball in the the non-last frame
 	[Test]
+	[Category("Actions")]
 	public void T06_SecondBallNotLastFrameEndsTurn() {
 		scoreCard.Initialize(numberOfPlayers, numberOfGames, framesPerGame);
 		scoreCard.Bowl(3);
@@ -90,6 +96,7 @@ public class ScoreCardTest {
 
 	// Ensure you can go to the next player when the turn ends
 	[Test]
+	[Category("Actions")]
 	public void T07_EndTurnGoesToNextPlayer() {
 		this.numberOfPlayers = 2;
 		playerNames.Add("Helix Brady");
@@ -104,6 +111,7 @@ public class ScoreCardTest {
 
 	// Can you go to the next frame after all players have bowled that frame?
 	[Test]
+	[Category("Actions")]
 	public void T08_EndFrameGoesToNextFrame() {
 		this.numberOfPlayers = 2;
 		playerNames.Add("Helix Brady");
@@ -122,6 +130,7 @@ public class ScoreCardTest {
 
 	// Can you go to the next game after all frames are done?
 	[Test]
+	[Category("Actions")]
 	public void T09_EndGameGoesToNextGame() {
 		this.numberOfGames = 2;
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
@@ -139,6 +148,7 @@ public class ScoreCardTest {
 	// If it's the second ball in the last frame, and it's not a spare, and they haven't gotten a strike or a spare, and it's the last player, then end the game 
 	// This is really the same as the last test, but it's good to spell it out
 	[Test]
+	[Category("Actions")]
 	public void T10_TenthFrameNoMarkEndsGame() {
 		this.numberOfGames = 2;
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
@@ -156,6 +166,7 @@ public class ScoreCardTest {
 
 	// If it's the second ball in the last frame, and it's not a spare, and they haven't gotten a strike or a spare, and it's NOT the last player, then end the turn
 	[Test]
+	[Category("Actions")]
 	public void T11_TenthFrameFirstPlayerNoMarkEndsTurn() {
 		this.numberOfPlayers = 2;
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
@@ -179,6 +190,7 @@ public class ScoreCardTest {
 
 	// Strike in the first ball of the last frame when they get to go again (reset)
 	[Test]
+	[Category("Actions")]
 	public void T12_TenthFrameFirstBallStrikeResets() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -207,6 +219,7 @@ public class ScoreCardTest {
 
 	// Two strikes in the first two balls of the last frame -- reset
 	[Test]
+	[Category("Actions")]
 	public void T13_TenthFrameFirstTwoBallsStrikeResets() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -236,6 +249,7 @@ public class ScoreCardTest {
 
 	// Spare in the last frame when they get to go again (reset)
 	[Test]
+	[Category("Actions")]
 	public void T14_TenthFrameFirstTwoBallsSpareResets() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -265,6 +279,7 @@ public class ScoreCardTest {
 
 	// If it's the third ball in the last frame and no more players, end the game
 	[Test]
+	[Category("Actions")]
 	public void T15_TenthFrameThidBallLastPlayerEndsGame() {
 		this.numberOfGames = 2;
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
@@ -294,6 +309,7 @@ public class ScoreCardTest {
 
 	// If it's the third ball in the last frame and there are more players, end the turn
 	[Test]
+	[Category("Actions")]
 	public void T16_TenthFrameThidBallMorePlayersEndsTurn() {
 		this.numberOfPlayers = 2;
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
@@ -323,6 +339,7 @@ public class ScoreCardTest {
 
 	// Does the series end when the last turn is taken?
 	[Test]
+	[Category("Actions")]
 	public void T17_EndSeries() {
 		this.numberOfGames = 2;
 		this.numberOfPlayers = 2;
@@ -359,6 +376,7 @@ public class ScoreCardTest {
 
 	// Is a gutter and 10 marked a spare?
 	[Test]
+	[Category("Scores")]
 	public void T18_GutterTenIsSpare() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -369,6 +387,7 @@ public class ScoreCardTest {
 
 	// Are three strikes in a rwo calculated as 30?
 	[Test]
+	[Category("Scores")]
 	public void T19_ThreeStrikesReturns30() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -385,6 +404,7 @@ public class ScoreCardTest {
 
 	// Are two strikes and 5 calculated as 25?
 	[Test]
+	[Category("Scores")]
 	public void T20_TwoStrikesAnd5Returns25() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -400,6 +420,7 @@ public class ScoreCardTest {
 
 	// Is one strike and a spare caclualted as 20?
 	[Test]
+	[Category("Scores")]
 	public void T21_StrikeAndSpareReturns20() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -415,6 +436,7 @@ public class ScoreCardTest {
 
 	// Is one strike and frame of 9 caclualted as 19?
 	[Test]
+	[Category("Scores")]
 	public void T22_StrikeAndNineReturns19() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -429,6 +451,7 @@ public class ScoreCardTest {
 
 	// Is one spare and a strike calculated as 20?
 	[Test]
+	[Category("Scores")]
 	public void T23_SpareAndStrikeReturns20() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -444,6 +467,7 @@ public class ScoreCardTest {
 
 	// Is one spare and 8 calculated as 18?
 	[Test]
+	[Category("Scores")]
 	public void T24_SpareAnd8Returns18() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -458,6 +482,7 @@ public class ScoreCardTest {
 
 	// Is an open frame of 7 calculated as 7?
 	[Test]
+	[Category("Scores")]
 	public void T25_OpenFrameReturnsScore() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -470,6 +495,7 @@ public class ScoreCardTest {
 
 	// If it's the second ball of the last frame, and the last frame was a strike, and the first ball of this frame was 4 and the second ball was a 6, is last frame calculated as 20?
 	[Test]
+	[Category("Scores")]
 	public void T26_SecondBallLastFrameLastBallStrike4And6Returns20() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -490,6 +516,7 @@ public class ScoreCardTest {
 
 	// If it's the second ball of the last frame, and the last frame was a strike, and the first ball of this frame was a strike and the second ball was a 6, is it calculated as 26?
 	[Test]
+	[Category("Scores")]
 	public void T27_SecondBallLastFrameLastBallStrikeStrikeAnd6Returns26() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -510,6 +537,7 @@ public class ScoreCardTest {
 
 	// If it's the third ball of the last frame, does it calculate corectly?
 	[Test]
+	[Category("Scores")]
 	public void T28_ThirdBallLastFrameReturnsScore() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -529,6 +557,7 @@ public class ScoreCardTest {
 
 	// If it's ball 1 and a strike, does the score come back as -1?
 	[Test]
+	[Category("Scores")]
 	public void T29_StrikeNotScored() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -539,6 +568,7 @@ public class ScoreCardTest {
 
 	// If it's ball 2 and a spare, does the score come back as -1?
 	[Test]
+	[Category("Scores")]
 	public void T30_SpareNotScored() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -550,6 +580,7 @@ public class ScoreCardTest {
 
 	// Does a game of 300 get calculated correctly?
 	[Test]
+	[Category("Scores")]
 	public void T31_300ScoredCorrectly() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -562,6 +593,7 @@ public class ScoreCardTest {
 	}
 
 	// Does a game get calculated correctly?
+	[Category("Scores")]
 	[Test]
 	public void T32_GameScoredCorrectly() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
@@ -576,6 +608,7 @@ public class ScoreCardTest {
 
 	// Does a two-player game get calculated correctly?
 	[Test]
+	[Category("Scores")]
 	public void T33_TwoPlayerGameScoredCorrectly() {
 		this.numberOfPlayers = 2;
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
@@ -591,6 +624,7 @@ public class ScoreCardTest {
 
 	// Does a series get calculated correctly?
 	[Test]
+	[Category("Scores")]
 	public void T34_SeriesScoredCorrectly() {
 		this.numberOfGames = 3;
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
@@ -609,6 +643,7 @@ public class ScoreCardTest {
 
 	// Does a two-player series get calculated correctly?
 	[Test]
+	[Category("Scores")]
 	public void T35_TwoPlayerSeriesScoredCorrectly() {
 		this.numberOfGames = 3;
 		this.numberOfPlayers = 2;
@@ -626,6 +661,7 @@ public class ScoreCardTest {
 
 	// Does a strike report as a strike?
 	[Test]
+	[Category("Scores")]
 	public void T36_StrikeReportsStrike() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -637,6 +673,7 @@ public class ScoreCardTest {
 
 	// Does a spare report as a spare?
 	[Test]
+	[Category("Scores")]
 	public void T37_SpareReportsSpare() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -649,6 +686,7 @@ public class ScoreCardTest {
 
 	// Do two strikes in a row report correctly?
 	[Test]
+	[Category("Scores")]
 	public void T38_TwoStrikesInARow() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -661,6 +699,7 @@ public class ScoreCardTest {
 
 	// Do three strikes in a row return turkey?
 	[Test]
+	[Category("Scores")]
 	public void T39_Turkey() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -674,6 +713,7 @@ public class ScoreCardTest {
 
 	// First ball of last frame strike
 	[Test]
+	[Category("Scores")]
 	public void T40_FirstBallLastFrameStrike() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -690,6 +730,7 @@ public class ScoreCardTest {
 
 	// First ball of last frame two in a row
 	[Test]
+	[Category("Scores")]
 	public void T41_FirstBallLastFrameTwoInRow() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -707,6 +748,7 @@ public class ScoreCardTest {
 
 	// First ball of last frame turkey 
 	[Test]
+	[Category("Scores")]
 	public void T42_FirstBallLastFrameTurkey() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -725,6 +767,7 @@ public class ScoreCardTest {
 
 	// Second ball of last frame two in a row
 	[Test]
+	[Category("Scores")]
 	public void T43_SecondBallLastFrameTwoInRow() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -742,6 +785,7 @@ public class ScoreCardTest {
 
 	// Second ball of last frame turkey
 	[Test]
+	[Category("Scores")]
 	public void T44_SecondBallLastFrameTurkey() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -760,6 +804,7 @@ public class ScoreCardTest {
 
 	// Third ball of last frame turkey
 	[Test]
+	[Category("Scores")]
 	public void T45_ThirdBallLastFrameTurkey() {
 		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
 
@@ -776,10 +821,96 @@ public class ScoreCardTest {
 		Assert.AreEqual(turkey, scoreCard.GetBallResult());
 	}
 
+
+
 // TODO:  No ability to check for these yet
 
 	// Does a gutter return a gutter?
 
 	// Does a split return a split?
 
+	// http://slocums.homestead.com/gamescore.html
+	[Test]
+	[Category ("Verification")]
+	public void TG02GoldenCopyA () {
+		int[] rolls = { 10, 7,3, 9,0, 10, 0,8, 8,2, 0,6, 10, 10, 10,8,1};
+
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+
+		foreach (int roll in rolls) {
+			scoreCard.Bowl(roll);
+		}
+
+		Assert.AreEqual (167, scoreCard.GetPlayer(1).GetGame(1).GetScore());
+	}
+	
+	//http://guttertoglory.com/wp-content/uploads/2011/11/score-2011_11_28.png
+	[Category ("Verification")]
+	[Test]
+	public void TG03GoldenCopyB1of3 () {
+		int[] rolls = { 10, 9,1, 9,1, 9,1, 9,1, 7,0, 9,0, 10, 8,2, 8,2,10};
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+
+		foreach (int roll in rolls) {
+			scoreCard.Bowl(roll);
+		}
+
+		Assert.AreEqual (168, scoreCard.GetPlayer(1).GetGame(1).GetScore());
+	}
+
+	//http://guttertoglory.com/wp-content/uploads/2011/11/score-2011_11_28.png
+	[Category ("Verification")]
+	[Test]
+	public void TG03GoldenCopyB2of3 () {
+		int[] rolls = { 8,2, 8,1, 9,1, 7,1, 8,2, 9,1, 9,1, 10, 10, 7,1};
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+
+		foreach (int roll in rolls) {
+			scoreCard.Bowl(roll);
+		}
+
+		Assert.AreEqual (163, scoreCard.GetPlayer(1).GetGame(1).GetScore());
+	}
+
+	//http://guttertoglory.com/wp-content/uploads/2011/11/score-2011_11_28.png
+	[Category ("Verification")]
+	[Test]
+	public void TG03GoldenCopyB3of3 () {
+		int[] rolls = { 10, 10, 9,0, 10, 7,3, 10, 8,1, 6,3, 6,2, 9,1,10};
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+
+		foreach (int roll in rolls) {
+			scoreCard.Bowl(roll);
+		}
+
+		Assert.AreEqual (162, scoreCard.GetPlayer(1).GetGame(1).GetScore());
+	}
+
+	// http://brownswick.com/wp-content/uploads/2012/06/OpenBowlingScores-6-12-12.jpg
+	[Category ("Verification")]
+	[Test]
+	public void TG03GoldenCopyC1of3 () {
+		int[] rolls = { 7,2, 10, 10, 10, 10, 7,3, 10, 10, 9,1, 10,10,9};
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+
+		foreach (int roll in rolls) {
+			scoreCard.Bowl(roll);
+		}
+
+		Assert.AreEqual (234, scoreCard.GetPlayer(1).GetGame(1).GetScore());
+	}
+
+	// http://brownswick.com/wp-content/uploads/2012/06/OpenBowlingScores-6-12-12.jpg
+	[Category ("Verification")]
+	[Test]
+	public void TG03GoldenCopyC2of3 () {
+		int[] rolls = { 10, 10, 10, 10, 9,0, 10, 10, 10, 10, 10,9,1};
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+
+		foreach (int roll in rolls) {
+			scoreCard.Bowl(roll);
+		}
+
+		Assert.AreEqual (256, scoreCard.GetPlayer(1).GetGame(1).GetScore());
+	}
 }
