@@ -2,9 +2,9 @@
 {
 	private bool isSpare = false;
 	private bool isStrike = false;
-	private int pinsKnockedDown = 0;
+	// TODO: refactor this to default to -1
+	private int pinsKnockedDown = -1;
 
-	// TODO: can we refactor these using enums?
 	public bool GetIsSpare() {
 		return isSpare;
 	}
