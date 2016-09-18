@@ -7,13 +7,13 @@ public class ScorePanel : MonoBehaviour {
 
 	public GameObject frame, lastFrame, playerCard;
 
-	private int currentGame = 1;
 	private float initialXPositionFrame = -330f,
 		initialXPositionPlayerCard = -271f,
 		initialYPositionFrame = 135f,
 		initialYPositionPlayerCard = 200f;
 	private GameObject frameClone, lastFrameClone, playerCardClone;
 	private int framesPerGame;
+	private int numberOfGames;
 	private GameObject scoreCardGameObject;
 
 	// Use this for initialization
@@ -24,12 +24,7 @@ public class ScorePanel : MonoBehaviour {
 		}
 	}
 	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
-	public void Initialize(List<string> playerNames, int framesPerGame) {
+	public void Initialize(List<string> playerNames, int framesPerGame, int numberOfGames) {
 		float currentXPositionFrame = initialXPositionFrame, 
 			currentXPositionPlayerCard = initialXPositionPlayerCard,
 			currentYPositionFrame = initialYPositionFrame,
@@ -40,6 +35,7 @@ public class ScorePanel : MonoBehaviour {
 		int playerNumber = 0;
 
 		this.framesPerGame = framesPerGame;
+		this.numberOfGames = numberOfGames;
 
 		foreach (string playerName in playerNames) {
 			// Create the player card
@@ -80,21 +76,50 @@ public class ScorePanel : MonoBehaviour {
 		}
 	}
 
-	public void StartNewGame() {
+	public void StartNewGame(ScoreCard scoreCard) {
+		GameObject ballPanel, ballText, framePanel, frameScoreText;
+		GameObject gameNumberObject = transform.Find("ScoreCard").gameObject.transform.Find("Game Number").gameObject;
+		Text gameNumberText = gameNumberObject.GetComponent<Text>();
+		Hashtable gameStatus = scoreCard.GetCurrentStatus();
+		int playerNumber = 0;
+		Player[] players = scoreCard.GetPlayers();
 
+		gameNumberText.text = "Game " + gameStatus["currentGameNumber"];
+
+		// Clear out the score card
+		foreach (Player player in players) {
+			playerNumber++;
+			for (int frameNumber = 1; frameNumber <= this.framesPerGame; ++frameNumber) {
+				framePanel = scoreCardGameObject.transform.Find("Player " + playerNumber.ToString() + " Frame " + frameNumber).gameObject;
+				frameScoreText = framePanel.transform.Find("Score").gameObject.transform.Find("Score Text").gameObject;
+				frameScoreText.GetComponent<Text>().fontSize = 24;
+				frameScoreText.GetComponent<Text>().text = "";
+				foreach (Transform child in framePanel.transform) {
+					if (child.tag == "BallPanel") {
+						ballText = child.GetChild(0).gameObject;
+						ballText.GetComponent<Text>().text = "";
+					}
+		}
+
+			}
+		}
+		UpdateScores(scoreCard);
 	}
 
-	public void Update(ScoreCard scoreCard) {
+	public void UpdateScores(ScoreCard scoreCard) {
 		Ball ball;
 		List<Ball> balls;
+		int currentGame;
 		int frameScore, gameScore, seriesScore;
 		Game game;
 		Frame frame;
-		GameObject ballPanel, ballText, framePanel, frameScoreText, playerCard, playerScore;
+		GameObject ballPanel, ballText, framePanel, frameScoreText, playerScore;
 		Frame[] frames;
 		int playerNumber = 0;
 		Player[] players = scoreCard.GetPlayers();
 		int runningScore = 0;
+		Hashtable gameStatus = scoreCard.GetCurrentStatus();
+		currentGame = (int)gameStatus["currentGameNumber"];
 
 		// We need to loop over each player, then over the game, then the frame, and then the balls
 		foreach (Player player in players) {
@@ -102,13 +127,14 @@ public class ScorePanel : MonoBehaviour {
 			playerNumber++;
 			game = player.GetGame(currentGame);
 			playerScore = scoreCardGameObject.transform.Find("Player " + playerNumber.ToString()).gameObject.transform.Find("Total Score").gameObject;
-			playerScore.GetComponent<Text>().text = Mathf.Clamp(game.GetScore(),0,300).ToString();
+			playerScore.GetComponent<Text>().text = Mathf.Clamp(player.GetScore(),0,300 * this.numberOfGames).ToString();
 
 			frames = game.GetFrames();
 			for (int frameNumber = 1; frameNumber <= frames.Length; ++frameNumber) {
 				frame = game.GetFrame(frameNumber);
 				if (frame != null) {
 					framePanel = scoreCardGameObject.transform.Find("Player " + playerNumber.ToString() + " Frame " + frameNumber).gameObject;
+//					Debug.Log(framePanel);
 					if (frame.GetScore() >= 0) {
 						runningScore += frame.GetScore();
 						frameScoreText = framePanel.transform.Find("Score").gameObject.transform.Find("Score Text").gameObject;

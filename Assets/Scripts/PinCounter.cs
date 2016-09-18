@@ -22,7 +22,6 @@ public class PinCounter : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (ballMaster.GetStatus() == BallMaster.Status.OutOfPlay) {
-			standingPinCount.color = Color.red;
 			UpdateStandingCount();
 		}
 	}
@@ -59,7 +58,6 @@ public class PinCounter : MonoBehaviour {
 	private void PinsHaveSettled() {
 		gameManager.FinishTurn();
 		lastStandingCount = -1;
-		standingPinCount.color = Color.green;
 	}
 
 	private void UpdateStandingCount() {
@@ -70,7 +68,6 @@ public class PinCounter : MonoBehaviour {
 			// If the standing count has changed, update the lastStandingCount and the lastChangeTime
 			lastStandingCount = currentStandingCount;
 			lastChangeTime = Time.time;
-			standingPinCount.text = currentStandingCount.ToString();
 		}
 		else if ((Time.time - lastChangeTime) > pinSettlingThreshold) {
 			// Otherwise, if it's been 3 seconds since it last changed, move on to PinsHaveSettled()

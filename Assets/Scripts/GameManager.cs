@@ -3,15 +3,21 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
+/* TODO:
+	* Add animator that displays the ball result (gutter, strike, spare, split, turkey, two in a row)
+	* Add display for when the game ends
+	* Create a start menu, where they enter how many players and what their names are
+	* Update the scrolling panel to automatically scroll to the current frame (at the end of the scroll if it's frame 3 or higher)
+	* Update the scrolling panel to have the playerCard show up at all times
+*/
+
 public class GameManager : MonoBehaviour {
 
 	private BallMaster ballMaster;
 	private bool ballCanBeRolled = false;
 	private Text ballText;
-	// TODO: do we need current Status?
-	private Hashtable currentStatus;
 	//TODO: get number of players/games some other way
-	private int framesPerGame = 10;
+	private int framesPerGame = 3;
 	private Text frameText;
 	private int numberOfPlayers = 2;
 	private int numberOfGames = 3;
@@ -69,7 +75,7 @@ public class GameManager : MonoBehaviour {
 					throw new UnityException("What to do when ending a series?");
 				break;
 		}
-		scorePanel.Update(scoreCard);
+		scorePanel.UpdateScores(scoreCard);
 	}
 
 	public bool GetBallCanBeRolled() {
@@ -84,18 +90,19 @@ public class GameManager : MonoBehaviour {
 		previousPinsKnockedDown = 0;
 		pinSetter.Reset();
 		ballMaster.Reset();
-		scorePanel.Update(scoreCard);
+		scorePanel.UpdateScores(scoreCard);
 	}
 
 	private void StartGame() {
 		this.currentStatus = scoreCard.GetCurrentStatus();
+		scorePanel.StartNewGame(scoreCard);
 		StartFrame();
 	}
 
 	private void StartSeries() {
 		// Initialize the scoreCard object, which contains all of the information about the series (games, players, scores, etc.)
 		scoreCard.Initialize(numberOfPlayers, numberOfGames, framesPerGame);
-		scorePanel.Initialize(playerNames, framesPerGame);
+		scorePanel.Initialize(playerNames, framesPerGame, numberOfGames);
 
 		StartGame();
 	}
