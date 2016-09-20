@@ -24,10 +24,6 @@ public class BallMaster : MonoBehaviour {
 		rollingAudioSource = GetComponent<AudioSource>();
 	}
 
-	// Use this for initialization
-	void Start () {
-	}
-
 	public Status GetStatus() {
 		return status;
 	}

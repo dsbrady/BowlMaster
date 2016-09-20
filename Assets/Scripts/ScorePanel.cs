@@ -17,7 +17,7 @@ public class ScorePanel : MonoBehaviour {
 	private GameObject scoreCardGameObject;
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 		scoreCardGameObject = gameObject.transform.Find("ScoreCard").gameObject;
 		if (!scoreCardGameObject) {
 			throw new UnityException("Could not find scoreCard game object!!");
@@ -134,7 +134,6 @@ public class ScorePanel : MonoBehaviour {
 				frame = game.GetFrame(frameNumber);
 				if (frame != null) {
 					framePanel = scoreCardGameObject.transform.Find("Player " + playerNumber.ToString() + " Frame " + frameNumber).gameObject;
-//					Debug.Log(framePanel);
 					if (frame.GetScore() >= 0) {
 						runningScore += frame.GetScore();
 						frameScoreText = framePanel.transform.Find("Score").gameObject.transform.Find("Score Text").gameObject;

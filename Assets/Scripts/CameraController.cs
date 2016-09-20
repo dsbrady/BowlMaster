@@ -4,11 +4,21 @@ using System.Collections;
 public class CameraController : MonoBehaviour {
 
 	public BallMaster ballMaster;
+
+	private Vector3 initialPosition;
 	private Vector3 offset;
+
+
+	void Awake() {
+		initialPosition = transform.position;
+	}
 
 	// Use this for initialization
 	void Start () {
+		transform.position = initialPosition;
 		offset = transform.position - ballMaster.transform.position;
+		Debug.Log(transform.position);
+		Debug.Log(offset);
 	}
 	
 	// Update is called once per frame
