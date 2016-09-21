@@ -7,10 +7,10 @@ public class ScorePanel : MonoBehaviour {
 
 	public GameObject frame, lastFrame, playerCard;
 
-	private float initialXPositionFrame = -330f,
-		initialXPositionPlayerCard = -271f,
-		initialYPositionFrame = 135f,
-		initialYPositionPlayerCard = 200f;
+	private float initialXPositionFrame = -310f,
+		initialXPositionPlayerCard = -171f,
+		initialYPositionFrame = 240f,
+		initialYPositionPlayerCard = 340f;
 	private GameObject frameClone, lastFrameClone, playerCardClone;
 	private int framesPerGame;
 	private int numberOfGames;
@@ -59,7 +59,7 @@ public class ScorePanel : MonoBehaviour {
 				}
 				else {
 					frameRectTransform = (RectTransform)frame.transform;
-					objectPosition.x += frameRectTransform.rect.width/4;
+					objectPosition.x += frameRectTransform.rect.width/3;
 					frameClone = Instantiate(lastFrame, objectPosition, Quaternion.identity) as GameObject;
 				}
 				frameClone.name = "Player " + playerNumber.ToString() + " Frame " + frameNumber.ToString();
@@ -70,14 +70,14 @@ public class ScorePanel : MonoBehaviour {
 				frameRectTransform = (RectTransform)frameClone.transform;
 				currentXPositionFrame += frameRectTransform.rect.width;
 			}
-			currentYPositionPlayerCard -= 100f;
+			currentYPositionPlayerCard -= 160f;
 			currentXPositionFrame = initialXPositionFrame;
-			currentYPositionFrame -= 134f;
+			currentYPositionFrame -= 215f;
 		}
 	}
 
 	public void StartNewGame(ScoreCard scoreCard) {
-		GameObject ballPanel, ballText, framePanel, frameScoreText;
+		GameObject ballText, framePanel, frameScoreText;
 		GameObject gameNumberObject = transform.Find("ScoreCard").gameObject.transform.Find("Game Number").gameObject;
 		Text gameNumberText = gameNumberObject.GetComponent<Text>();
 		Hashtable gameStatus = scoreCard.GetCurrentStatus();
@@ -110,7 +110,6 @@ public class ScorePanel : MonoBehaviour {
 		Ball ball;
 		List<Ball> balls;
 		int currentGame;
-		int frameScore, gameScore, seriesScore;
 		Game game;
 		Frame frame;
 		GameObject ballPanel, ballText, framePanel, frameScoreText, playerScore;

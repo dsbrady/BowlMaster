@@ -42,7 +42,7 @@ public class DragLaunch : MonoBehaviour {
 			launchVelocity = positionDifference / timeDuration;
 
 // TODO: remove this launchVelocity setting
-launchVelocity = new Vector3(0.3f, 0f,1700f);
+//launchVelocity = new Vector3(0.3f, 0f,1700f);
 			// Launch the ball
 			ballMaster.Roll(launchVelocity);
 		}

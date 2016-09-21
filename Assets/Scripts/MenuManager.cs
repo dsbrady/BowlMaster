@@ -27,8 +27,7 @@ public class MenuManager : MonoBehaviour {
 	}
 
 	public void StartSeries() {
-	// Not getting here?
-		// Just set at 10 for now
+		// TODO: get this another way
 		SetFramesPerGame(10);
 	
 		Debug.Log(SceneManager.GetSceneByName("Game"));
