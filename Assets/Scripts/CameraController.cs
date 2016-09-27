@@ -17,8 +17,6 @@ public class CameraController : MonoBehaviour {
 	void Start () {
 		transform.position = initialPosition;
 		offset = transform.position - ballMaster.transform.position;
-		Debug.Log(transform.position);
-		Debug.Log(offset);
 	}
 	
 	// Update is called once per frame

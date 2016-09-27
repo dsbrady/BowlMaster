@@ -8,9 +8,6 @@ public class Player {
 	public Player(int numberOfGames, int framesPerGame) {
 		games = new Game[numberOfGames];
 
-		// TODO: get the player's name
-		name = "Bob Smith";
-
 		// Create the first game
 		games[0] = new Game(framesPerGame);
 	}
@@ -37,6 +34,10 @@ public class Player {
 
 	public void SetNextGame(int gameNumber, int framesPerGame) {
 		games[gameNumber - 1] = new Game(framesPerGame);
+	}
+
+	public void SetName(string playerName) {
+		this.name = playerName;
 	}
 
 	public void SetScore(int seriesScore) {

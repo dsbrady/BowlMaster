@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -7,8 +8,8 @@ public class ScorePanel : MonoBehaviour {
 
 	public GameObject frame, lastFrame, playerCard;
 
-	private float initialXPositionFrame = -310f,
-		initialXPositionPlayerCard = -171f,
+	private float initialXPositionFrame = -490f,
+		initialXPositionPlayerCard = -355f,
 		initialYPositionFrame = 240f,
 		initialYPositionPlayerCard = 340f;
 	private GameObject frameClone, lastFrameClone, playerCardClone;
@@ -24,7 +25,7 @@ public class ScorePanel : MonoBehaviour {
 		}
 	}
 	
-	public void Initialize(List<string> playerNames, int framesPerGame, int numberOfGames) {
+	public void Initialize(int numberOfPlayers, int numberOfGames, int framesPerGame, List<string> playerNames) {
 		float currentXPositionFrame = initialXPositionFrame, 
 			currentXPositionPlayerCard = initialXPositionPlayerCard,
 			currentYPositionFrame = initialYPositionFrame,
@@ -32,14 +33,14 @@ public class ScorePanel : MonoBehaviour {
 		GameObject frameNumberText, playerNameText;
 		RectTransform frameRectTransform, playerCardRectTransform;
 		Vector3 objectPosition;
-		int playerNumber = 0;
+		string playerName;
 
 		this.framesPerGame = framesPerGame;
 		this.numberOfGames = numberOfGames;
 
-		foreach (string playerName in playerNames) {
+		for (int playerNumber = 1; playerNumber <= numberOfPlayers; ++playerNumber) {
 			// Create the player card
-			playerNumber++;
+			playerName = playerNames[playerNumber - 1];
 			objectPosition = new Vector3(currentXPositionPlayerCard, currentYPositionPlayerCard, 0f);
 			playerCardClone = Instantiate(playerCard, objectPosition, Quaternion.identity) as GameObject;
 			playerCardClone.name = "Player " + playerNumber.ToString();
@@ -70,7 +71,7 @@ public class ScorePanel : MonoBehaviour {
 				frameRectTransform = (RectTransform)frameClone.transform;
 				currentXPositionFrame += frameRectTransform.rect.width;
 			}
-			currentYPositionPlayerCard -= 160f;
+			currentYPositionPlayerCard -= 166f;
 			currentXPositionFrame = initialXPositionFrame;
 			currentYPositionFrame -= 215f;
 		}
@@ -81,14 +82,12 @@ public class ScorePanel : MonoBehaviour {
 		GameObject gameNumberObject = transform.Find("ScoreCard").gameObject.transform.Find("Game Number").gameObject;
 		Text gameNumberText = gameNumberObject.GetComponent<Text>();
 		Hashtable gameStatus = scoreCard.GetCurrentStatus();
-		int playerNumber = 0;
 		Player[] players = scoreCard.GetPlayers();
 
 		gameNumberText.text = "Game " + gameStatus["currentGameNumber"];
 
 		// Clear out the score card
-		foreach (Player player in players) {
-			playerNumber++;
+		for (int playerNumber = 1; playerNumber <= players.Length; ++playerNumber) {
 			for (int frameNumber = 1; frameNumber <= this.framesPerGame; ++frameNumber) {
 				framePanel = scoreCardGameObject.transform.Find("Player " + playerNumber.ToString() + " Frame " + frameNumber).gameObject;
 				frameScoreText = framePanel.transform.Find("Score").gameObject.transform.Find("Score Text").gameObject;

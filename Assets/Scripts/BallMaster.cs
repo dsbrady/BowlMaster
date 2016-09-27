@@ -10,6 +10,7 @@ public class BallMaster : MonoBehaviour {
 	private CameraController cameraController;
 	private Vector3 initialPosition;
 	private Quaternion initialRotation;
+	private PowerMeter powerMeter;
 	private Rigidbody rigidBody;
 	private AudioSource rollingAudioSource;
 	private Status status = Status.Idle;
@@ -19,6 +20,7 @@ public class BallMaster : MonoBehaviour {
 		cameraController = GameObject.FindObjectOfType<CameraController>();
 		initialPosition = transform.position;
 		initialRotation = transform.rotation;
+		powerMeter = GameObject.FindObjectOfType<PowerMeter>();
 		rigidBody = gameObject.GetComponent<Rigidbody>();
 		rigidBody.useGravity = false;
 		rollingAudioSource = GetComponent<AudioSource>();
@@ -43,6 +45,9 @@ public class BallMaster : MonoBehaviour {
 		rigidBody.velocity = Vector3.zero;
 		rigidBody.angularVelocity = Vector3.zero;
 		cameraController.Reset();
+		if (powerMeter) {
+			powerMeter.Reset();
+		}
 	}
 
 	public void Roll(Vector3 initialVelocity) {

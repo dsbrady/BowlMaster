@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-// TODO: make a separate class for determining the actual scores?  (ScoreMaster?)
-// TODO: separate scoreDisplay class?
-// TODO: break up the ScoreCardTest?
 public class ScoreCard {
 	public enum Action {EndGame, EndSeries, EndTurn, Reset, Tidy, None};
 	public enum BallResult {Gutter, Spare, Split, Strike, Turkey, TwoInRow, None};
@@ -13,7 +11,8 @@ public class ScoreCard {
 
 	private int currentGameNumber, currentPlayerNumber, currentFrameNumber, currentBallNumber, numberOfGames, numberOfPlayers, framesPerGame;
 	private Player[] players;
-
+	private ResultPanel resultPanel;
+	
 	public Action Bowl(int pinsKnockedDown) {
 		// Make sure the number of pins is valid
 		if (!IsValidBowl(pinsKnockedDown)) {
@@ -94,6 +93,7 @@ public class ScoreCard {
 
 		// Determine the ball result (strike, spare, turkey, etc.)
 		this.ballResult = DetermineBallResult();
+		ShowBallResult();
 
 		// Calculate scores
 		CalculateBallScore();
@@ -144,6 +144,47 @@ public class ScoreCard {
 		return status;
 	}
 
+	public List<Hashtable> GetFinalResults() {
+		Player player;
+		bool playerInserted;
+		Player[] players = GetPlayers();
+		List<Hashtable> results = new List<Hashtable>();
+
+		// Loop over the players, then loop over the results; if player's score is higher than current result player, insert it at that index; then break out of the results loop
+		for (int playerNumber = 0; playerNumber < players.Length; ++playerNumber) {
+			player = players[playerNumber];
+			// If this is the first playerNumber, just insert the player
+			if (playerNumber == 0) {
+				results.Add(new Hashtable());
+				results[0]["name"] = player.GetName();
+				results[0]["score"] = player.GetScore();
+			}
+			else {
+				playerInserted = false;
+				for (int resultNumber = 0; resultNumber < results.Count; ++resultNumber) {
+					if (player.GetScore() > (int)results[resultNumber]["score"]) {
+						results.Insert(resultNumber, new Hashtable());
+						results[resultNumber]["name"] = player.GetName();
+						results[resultNumber]["score"] = player.GetScore();
+						playerInserted = true;
+						break;
+					}
+				}
+				// If the player was inserted, continue to the next interation
+				if (playerInserted) {
+					continue;
+				}
+				// If we get this point, the player hasn't been inserted yet, so it's the lowest score so far; just add it
+				results.Add(new Hashtable());
+				results[results.Count - 1]["name"] = player.GetName();
+				results[results.Count - 1]["score"] = player.GetScore();
+			}
+
+		}
+
+		return results;
+	}
+
 	public Player GetPlayer(int playerNumber) {
 		if (playerNumber > players.Length) {
 			throw new UnityException("Invalid player number");
@@ -156,7 +197,12 @@ public class ScoreCard {
 		return players;
 	}
 
-	public void Initialize(int numberOfPlayers, int numberOfGames, int framesPerGame) {
+	public void Initialize(int numberOfPlayers, int numberOfGames, int framesPerGame, List<string> playerNames) {
+		// Make sure the player names length is at least as large as the number of players
+		if (playerNames.Count < numberOfPlayers) {
+			throw new UnityException("There aren't enough names for the number of players!");
+		}
+
 		this.numberOfPlayers = numberOfPlayers;
 		this.numberOfGames = numberOfGames;
 		this.framesPerGame = framesPerGame;
@@ -165,6 +211,7 @@ public class ScoreCard {
 
 		for (int i = 0; i < numberOfPlayers; ++i) {
 			players[i] =  new Player(numberOfGames, framesPerGame);
+			players[i].SetName(playerNames[i]);
 		}
 
 		currentGameNumber = 1;
@@ -173,6 +220,10 @@ public class ScoreCard {
 		currentBallNumber = 1;
 	}
 
+	public void SetResultPanel(ResultPanel resultPanel) {
+		this.resultPanel = resultPanel;
+	}
+	
 	public override string ToString() {
 		string returnString = "Score Card:";
 		Player player;
@@ -327,9 +378,13 @@ public class ScoreCard {
 				result = BallResult.Strike;
 			}
 		}
+		// For a gutter, we probably also need a flag of some sort that it entered the gutter area, but for now, we'll assume 0 pins is a gutter
+		else if (ball.GetPinsKnockedDown() == 0) {
+			result = BallResult.Gutter;
+		
+		}
 		else {
-			// TODO: check for gutter or split -- gutter should probably just be a flag that gets set on the ball and is triggered when entering the gutter and 0 pins are knocked down;  
-			// split will require making sure it's the first ball and seeing what pins are still standing
+			// TODO: check for split -- will require making sure it's the first ball and seeing what pins are still standing
 		}
 
 		return result;
@@ -399,5 +454,28 @@ public class ScoreCard {
 		// TODO: make sure that it's not the first ball, the number of pins is valid -- watching out for the 10th frame
 
 		return true;
+	}
+	
+	private void ShowBallResult() {
+		bool panelShown = false;
+		switch (this.ballResult) {
+			case BallResult.Gutter:
+				this.resultPanel.ShowGutter();
+				panelShown = true;
+				break;
+			case BallResult.Spare:
+				this.resultPanel.ShowSpare();
+				panelShown = true;
+				break;
+			case BallResult.Strike:
+				this.resultPanel.ShowStrike();
+				panelShown = true;
+				break;
+		}
+
+		// After 2 seconds, turn off the panel after a deleay
+		if (panelShown) {
+			this.resultPanel.TurnOffPanel();
+		}
 	}
 }

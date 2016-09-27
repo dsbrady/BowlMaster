@@ -28,15 +28,14 @@ public class ScoreCardTest {
 		numberOfGames = 1;
 		framesPerGame = 10;
 
-		playerNames = new List<string>();
-		playerNames.Add("Bob Smith");
+		playerNames = new List<string> {"Scott", "Derek", "Brent", "Amy"};
 	}
 
 	// Make sure game was initialized properly
 	[Test]
 	[Category("Initial")]
 	public void T01_InitializeSeries() {
-		scoreCard.Initialize(numberOfPlayers, numberOfGames, framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 		Assert.AreEqual(numberOfPlayers, scoreCard.GetPlayers().Length);
 		Assert.AreEqual(numberOfGames, scoreCard.GetPlayer(1).GetGames().Length);
 		Assert.AreEqual(framesPerGame, scoreCard.GetPlayer(1).GetGame(1).GetFrames().Length);
@@ -48,7 +47,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Initial")]
 	public void T02_GetCurrentFrame() {
-		scoreCard.Initialize(numberOfPlayers, numberOfGames, framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 		Assert.IsInstanceOf<Hashtable>(scoreCard.GetCurrentPlayerFrame());
 		Hashtable currentPlayerFrame = scoreCard.GetCurrentPlayerFrame();
 		Assert.IsNotNull(currentPlayerFrame["playerName"]);
@@ -64,7 +63,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Actions")]
 	public void T03_Bowl() {
-		scoreCard.Initialize(numberOfPlayers, numberOfGames, framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 		Assert.IsInstanceOf<ScoreCard.Action>(scoreCard.Bowl(3));
 	}
 
@@ -73,7 +72,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Actions")]
 	public void T04_FirstBallNonStrikeTidies() {
-		scoreCard.Initialize(numberOfPlayers, numberOfGames, framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 		Assert.AreEqual(tidy, scoreCard.Bowl(3));
 	}
 
@@ -81,7 +80,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Actions")]
 	public void T05_StrikeNotLastFrameEndsTurn() {
-		scoreCard.Initialize(numberOfPlayers, numberOfGames, framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 		Assert.AreEqual(endTurn, scoreCard.Bowl(10));
 	}
 
@@ -89,7 +88,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Actions")]
 	public void T06_SecondBallNotLastFrameEndsTurn() {
-		scoreCard.Initialize(numberOfPlayers, numberOfGames, framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 		scoreCard.Bowl(3);
 		Assert.AreEqual(endTurn, scoreCard.Bowl(2));
 	}
@@ -99,8 +98,7 @@ public class ScoreCardTest {
 	[Category("Actions")]
 	public void T07_EndTurnGoesToNextPlayer() {
 		this.numberOfPlayers = 2;
-		playerNames.Add("Helix Brady");
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		Hashtable status;
 		scoreCard.Bowl(1);
@@ -115,7 +113,7 @@ public class ScoreCardTest {
 	public void T08_EndFrameGoesToNextFrame() {
 		this.numberOfPlayers = 2;
 		playerNames.Add("Helix Brady");
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		Hashtable status;
 		// Player 1's turn
@@ -133,7 +131,7 @@ public class ScoreCardTest {
 	[Category("Actions")]
 	public void T09_EndGameGoesToNextGame() {
 		this.numberOfGames = 2;
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		Hashtable status;
 		// Bowl all of the frames in the game
@@ -151,7 +149,7 @@ public class ScoreCardTest {
 	[Category("Actions")]
 	public void T10_TenthFrameNoMarkEndsGame() {
 		this.numberOfGames = 2;
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		Hashtable status;
 		// Bowl all of the frames in the game
@@ -169,7 +167,7 @@ public class ScoreCardTest {
 	[Category("Actions")]
 	public void T11_TenthFrameFirstPlayerNoMarkEndsTurn() {
 		this.numberOfPlayers = 2;
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		Hashtable status;
 		// Bowl all of the frames in the game, up through the 9th frame
@@ -192,7 +190,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Actions")]
 	public void T12_TenthFrameFirstBallStrikeResets() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		Hashtable status;
 		// Bowl all of the frames in the game, up through the 9th frame
@@ -221,7 +219,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Actions")]
 	public void T13_TenthFrameFirstTwoBallsStrikeResets() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		Hashtable status;
 		// Bowl all of the frames in the game, up through the 9th frame
@@ -251,7 +249,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Actions")]
 	public void T14_TenthFrameFirstTwoBallsSpareResets() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		Hashtable status;
 		// Bowl all of the frames in the game, up through the 9th frame
@@ -282,7 +280,7 @@ public class ScoreCardTest {
 	[Category("Actions")]
 	public void T15_TenthFrameThidBallLastPlayerEndsGame() {
 		this.numberOfGames = 2;
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		Hashtable status;
 		// Bowl all of the frames in the game, up through the 9th frame
@@ -312,7 +310,7 @@ public class ScoreCardTest {
 	[Category("Actions")]
 	public void T16_TenthFrameThidBallMorePlayersEndsTurn() {
 		this.numberOfPlayers = 2;
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		Hashtable status;
 		// Bowl all of the frames in the game, up through the 9th frame
@@ -343,7 +341,7 @@ public class ScoreCardTest {
 	public void T17_EndSeries() {
 		this.numberOfGames = 2;
 		this.numberOfPlayers = 2;
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		Hashtable status;
 		// Bowl all of the frames in both games, up through the 9th frame of the second game
@@ -378,7 +376,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T18_GutterTenIsSpare() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		scoreCard.Bowl(0);
 		scoreCard.Bowl(10);
@@ -389,7 +387,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T19_ThreeStrikesReturns30() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		scoreCard.Bowl(10);
 		scoreCard.Bowl(10);
@@ -406,7 +404,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T20_TwoStrikesAnd5Returns25() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		scoreCard.Bowl(10);
 		scoreCard.Bowl(10);
@@ -422,7 +420,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T21_StrikeAndSpareReturns20() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		scoreCard.Bowl(10);
 		scoreCard.Bowl(4);
@@ -438,7 +436,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T22_StrikeAndNineReturns19() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		scoreCard.Bowl(10);
 		scoreCard.Bowl(4);
@@ -453,7 +451,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T23_SpareAndStrikeReturns20() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		scoreCard.Bowl(4);
 		scoreCard.Bowl(6);
@@ -469,7 +467,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T24_SpareAnd8Returns18() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		scoreCard.Bowl(4);
 		scoreCard.Bowl(6);
@@ -484,7 +482,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T25_OpenFrameReturnsScore() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		scoreCard.Bowl(4);
 		scoreCard.Bowl(3);
@@ -497,7 +495,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T26_SecondBallLastFrameLastBallStrike4And6Returns20() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		// Bowl all of the frames in the game, up through the 8th frame
 		for (int i = 1; i <= 8; ++i) {
@@ -518,7 +516,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T27_SecondBallLastFrameLastBallStrikeStrikeAnd6Returns26() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		// Bowl all of the frames in the game, up through the 8th frame
 		for (int i = 1; i <= 8; ++i) {
@@ -539,7 +537,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T28_ThirdBallLastFrameReturnsScore() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		// Bowl all of the frames in the game, up through the 9th frame
 		for (int i = 1; i <= 9; ++i) {
@@ -559,7 +557,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T29_StrikeNotScored() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		scoreCard.Bowl(10);
 
@@ -570,7 +568,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T30_SpareNotScored() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		scoreCard.Bowl(4);
 		scoreCard.Bowl(6);
@@ -582,7 +580,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T31_300ScoredCorrectly() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		// Bowl a 300
 		for (int i = 1; i <= 12; ++i) {
@@ -596,7 +594,7 @@ public class ScoreCardTest {
 	[Category("Scores")]
 	[Test]
 	public void T32_GameScoredCorrectly() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		// Bowl a game
 		for (int i = 1; i <= 20; ++i) {
@@ -611,7 +609,7 @@ public class ScoreCardTest {
 	[Category("Scores")]
 	public void T33_TwoPlayerGameScoredCorrectly() {
 		this.numberOfPlayers = 2;
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		// Bowl a game
 		for (int i = 1; i <= 40; ++i) {
@@ -627,7 +625,7 @@ public class ScoreCardTest {
 	[Category("Scores")]
 	public void T34_SeriesScoredCorrectly() {
 		this.numberOfGames = 3;
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		// Bowl all the games
 		for (int i = 1; i <= 30; ++i) {
@@ -647,7 +645,7 @@ public class ScoreCardTest {
 	public void T35_TwoPlayerSeriesScoredCorrectly() {
 		this.numberOfGames = 3;
 		this.numberOfPlayers = 2;
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		// Bowl all the games
 		for (int i = 1; i <= 60; ++i) {
@@ -663,7 +661,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T36_StrikeReportsStrike() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		// Bowl a strike
 		scoreCard.Bowl(10);
@@ -675,7 +673,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T37_SpareReportsSpare() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		// Bowl a spare
 		scoreCard.Bowl(3);
@@ -688,7 +686,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T38_TwoStrikesInARow() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		// Bowl 2 strikes
 		scoreCard.Bowl(10);
@@ -701,7 +699,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T39_Turkey() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		// Bowl 3 strikes
 		scoreCard.Bowl(10);
@@ -715,7 +713,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T40_FirstBallLastFrameStrike() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		// Bowl first 9 frames as non-strikes
 		for (int i = 1; i <= 18; ++i) {
@@ -732,7 +730,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T41_FirstBallLastFrameTwoInRow() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		// Bowl first 8 frames as non-strikes
 		for (int i = 1; i <= 16; ++i) {
@@ -750,7 +748,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T42_FirstBallLastFrameTurkey() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		// Bowl first 7 frames as non-strikes
 		for (int i = 1; i <= 14; ++i) {
@@ -769,7 +767,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T43_SecondBallLastFrameTwoInRow() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		// Bowl first 9 frames as non-strikes
 		for (int i = 1; i <= 18; ++i) {
@@ -787,7 +785,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T44_SecondBallLastFrameTurkey() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		// Bowl first 8 frames as non-strikes
 		for (int i = 1; i <= 16; ++i) {
@@ -806,7 +804,7 @@ public class ScoreCardTest {
 	[Test]
 	[Category("Scores")]
 	public void T45_ThirdBallLastFrameTurkey() {
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		// Bowl first 9 frames as non-strikes
 		for (int i = 1; i <= 18; ++i) {
@@ -819,6 +817,52 @@ public class ScoreCardTest {
 		scoreCard.Bowl(10);
 
 		Assert.AreEqual(turkey, scoreCard.GetBallResult());
+	}
+
+	[Test]
+	[Category("Scores")]
+	public void T46_GetFinalResults() {
+		// Test to make sure the final results are in order
+		this.numberOfGames = 3;
+		this.numberOfPlayers = 3;
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
+
+		List<Hashtable> results = new List<Hashtable>();
+
+		// Bowl everything except the last frame of the last game (first 2 games for each player: 20; 18 through frame 9; 58 total so far
+		for (int i = 1; i <= 174; ++i) {
+			scoreCard.Bowl(1);
+		}
+
+		// Now bowl last frame of last game for each player
+		// 78 total
+		scoreCard.Bowl(8);
+		scoreCard.Bowl(2);
+		scoreCard.Bowl(10);
+
+		// 88 total
+		scoreCard.Bowl(10);
+		scoreCard.Bowl(10);
+		scoreCard.Bowl(10);
+
+		// 67 total
+		scoreCard.Bowl(8);
+		scoreCard.Bowl(1);
+
+		// Generate expected results Hashtable
+		results.Add(new Hashtable());
+		results[0]["name"] = "Derek";
+		results[0]["score"] = 88;
+
+		results.Add(new Hashtable());
+		results[1]["name"] = "Scott";
+		results[1]["score"] = 78;
+
+		results.Add(new Hashtable());
+		results[2]["name"] = "Brent";
+		results[2]["score"] = 67;
+
+		Assert.AreEqual(results, scoreCard.GetFinalResults());
 	}
 
 
@@ -835,7 +879,7 @@ public class ScoreCardTest {
 	public void TG02GoldenCopyA () {
 		int[] rolls = { 10, 7,3, 9,0, 10, 0,8, 8,2, 0,6, 10, 10, 10,8,1};
 
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		foreach (int roll in rolls) {
 			scoreCard.Bowl(roll);
@@ -849,7 +893,7 @@ public class ScoreCardTest {
 	[Test]
 	public void TG03GoldenCopyB1of3 () {
 		int[] rolls = { 10, 9,1, 9,1, 9,1, 9,1, 7,0, 9,0, 10, 8,2, 8,2,10};
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		foreach (int roll in rolls) {
 			scoreCard.Bowl(roll);
@@ -863,7 +907,7 @@ public class ScoreCardTest {
 	[Test]
 	public void TG03GoldenCopyB2of3 () {
 		int[] rolls = { 8,2, 8,1, 9,1, 7,1, 8,2, 9,1, 9,1, 10, 10, 7,1};
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		foreach (int roll in rolls) {
 			scoreCard.Bowl(roll);
@@ -877,7 +921,7 @@ public class ScoreCardTest {
 	[Test]
 	public void TG03GoldenCopyB3of3 () {
 		int[] rolls = { 10, 10, 9,0, 10, 7,3, 10, 8,1, 6,3, 6,2, 9,1,10};
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		foreach (int roll in rolls) {
 			scoreCard.Bowl(roll);
@@ -891,7 +935,7 @@ public class ScoreCardTest {
 	[Test]
 	public void TG03GoldenCopyC1of3 () {
 		int[] rolls = { 7,2, 10, 10, 10, 10, 7,3, 10, 10, 9,1, 10,10,9};
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		foreach (int roll in rolls) {
 			scoreCard.Bowl(roll);
@@ -905,7 +949,7 @@ public class ScoreCardTest {
 	[Test]
 	public void TG03GoldenCopyC2of3 () {
 		int[] rolls = { 10, 10, 10, 10, 9,0, 10, 10, 10, 10, 10,9,1};
-		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame);
+		scoreCard.Initialize(this.numberOfPlayers, this.numberOfGames, this.framesPerGame, this.playerNames);
 
 		foreach (int roll in rolls) {
 			scoreCard.Bowl(roll);

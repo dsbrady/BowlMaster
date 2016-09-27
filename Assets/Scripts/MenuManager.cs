@@ -9,11 +9,6 @@ public class MenuManager : MonoBehaviour {
 	const string NUMBER_OF_PLAYERS = "numberOfPlayers";
 	const string FRAMES_PER_GAME = "framesPerGame";
 
-//	void OnGUI() {
-//		GUI.Button (new Rect (10,140,180,20), "This is a button", "toggle");
-//		Debug.Log (GameObject.Find ("Buttons").transform.Find("2 Players"));
-//	}
-//
 	public void SetFramesPerGame(int framesPerGame) {
 		PlayerPrefs.SetInt(FRAMES_PER_GAME, framesPerGame);
 	}
@@ -30,7 +25,6 @@ public class MenuManager : MonoBehaviour {
 		// TODO: get this another way
 		SetFramesPerGame(10);
 	
-		Debug.Log(SceneManager.GetSceneByName("Game"));
 		SceneManager.LoadScene("Game");
 	}
 }
