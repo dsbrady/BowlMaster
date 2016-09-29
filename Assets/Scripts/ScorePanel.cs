@@ -155,6 +155,9 @@ public class ScorePanel : MonoBehaviour {
 								else if (ball.GetIsSpare()) {
 									ballText.GetComponent<Text>().text = "/";
 								}
+								else if (ball.GetPinsKnockedDown() == 0) {
+									ballText.GetComponent<Text>().text = "-";
+								}
 								else {
 									ballText.GetComponent<Text>().text = ball.GetPinsKnockedDown().ToString();
 								}

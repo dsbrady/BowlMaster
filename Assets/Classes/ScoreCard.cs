@@ -458,19 +458,10 @@ public class ScoreCard {
 	
 	private void ShowBallResult() {
 		bool panelShown = false;
-		switch (this.ballResult) {
-			case BallResult.Gutter:
-				this.resultPanel.ShowGutter();
-				panelShown = true;
-				break;
-			case BallResult.Spare:
-				this.resultPanel.ShowSpare();
-				panelShown = true;
-				break;
-			case BallResult.Strike:
-				this.resultPanel.ShowStrike();
-				panelShown = true;
-				break;
+
+		if (this.ballResult != BallResult.None) {
+			panelShown = true;
+			this.resultPanel.ShowBallResult(this.ballResult);
 		}
 
 		// After 2 seconds, turn off the panel after a deleay

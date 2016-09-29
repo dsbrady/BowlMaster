@@ -1,16 +1,17 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
 /* TODO:
-	* Figure out why game ending display goes away after 2 seconds
 	* Update start menu to take player names (maybe after hitting start game) and how many frames per game (3-10)
 	* Update the scrolling panel to automatically scroll to the current frame (at the end of the scroll if it's frame 3 or higher)
 	* Update the scrolling panel to have the playerCard show up at all times
 	* Adjust physics of rolling
 	* add "hook meter" (-1 to 1)
-	* add labels for peters
+	* add labels for meters
+	* Add difficulty setting (affects animation speed of power meter)
 */
 
 public class GameManager : MonoBehaviour {
@@ -22,9 +23,9 @@ public class GameManager : MonoBehaviour {
 	private BallMaster ballMaster;
 	private bool ballCanBeRolled = false;
 	private Text ballText;
-	private int framesPerGame = 3;
+	private int framesPerGame = 10;
 	private Text frameText;
-	private int numberOfPlayers = 2;
+	private int numberOfPlayers = 1;
 	private int numberOfGames = 1;
 	private PinCounter pinCounter;
 	private PinSetter pinSetter;
@@ -34,20 +35,7 @@ public class GameManager : MonoBehaviour {
 	private ScoreCard scoreCard;
 	private ScorePanel scorePanel;
 	private Text scoreText;
-//
-//	static GameManager instance = null;
-//	
-//	void Awake () {
-//		// putting this in Awake to ensure there are not duplicate game managers
-//		if (instance != null) {
-//			Destroy(gameObject);
-//		}
-//		else {
-//			instance = this;
-//			GameObject.DontDestroyOnLoad(gameObject);
-//		}
-//	}
-//
+
 	// Use this for initialization
 	void Start () {
 		ballMaster = GameObject.FindObjectOfType<BallMaster>();
@@ -100,6 +88,10 @@ public class GameManager : MonoBehaviour {
 		return ballCanBeRolled;
 	}
 
+	public void ReturnToMainMenu() {
+		SceneManager.LoadScene(0);
+	}
+
 	public void SetNumberOfGames(int numberOfGames) {
 		this.numberOfGames = numberOfGames;
 	}
@@ -112,8 +104,7 @@ public class GameManager : MonoBehaviour {
 		// Pull the values from the player prefs
 		SetNumberOfPlayers(PlayerPrefs.GetInt(NUMBER_OF_PLAYERS));
 		SetNumberOfGames(PlayerPrefs.GetInt(NUMBER_OF_GAMES));
-// TODO: remove
-SetNumberOfPlayers(2);
+
 		// Initialize the scoreCard object, which contains all of the information about the series (games, players, scores, etc.)
 		this.scoreCard.Initialize(numberOfPlayers, numberOfGames, framesPerGame, playerNames);
 		this.scorePanel.Initialize(numberOfPlayers, numberOfGames, framesPerGame, playerNames);

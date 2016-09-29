@@ -33,7 +33,10 @@ public class BallMaster : MonoBehaviour {
 	public void NudgeStart(float amount) {
 		// Only allow this if the ball isn't rolling
 		if (status == Status.Idle) {
-			transform.Translate(new Vector3(0,0,amount));
+			float xPos = Mathf.Clamp(transform.position.x + amount,-50f, 50f);
+			float yPos = transform.position.y;
+			float zPos = transform.position.z;
+			transform.position = new Vector3(xPos, yPos, zPos);
 		}
 	}
 
