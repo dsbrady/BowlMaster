@@ -1,78 +1,115 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
+
+/* TODO:
+	* Update start menu to take player names (maybe after hitting start game) and how many frames per game (3-10)
+	* Update the scrolling panel to automatically scroll to the current frame (at the end of the scroll if it's frame 3 or higher)
+	* Update the scrolling panel to have the playerCard show up at all times
+	* Adjust physics of rolling
+	* add "hook meter" (-1 to 1)
+	* add labels for meters
+	* Add difficulty setting (affects animation speed of power meter)
+*/
 
 public class GameManager : MonoBehaviour {
 
-	private Ball ball;
+	const string NUMBER_OF_GAMES = "numberOfGames";
+	const string NUMBER_OF_PLAYERS = "numberOfPlayers";
+	const string FRAMES_PER_GAME = "framesPerGame";
+	
+	private BallMaster ballMaster;
 	private bool ballCanBeRolled = false;
 	private Text ballText;
-	private int currentFrame;
-	private int currentGame;
-	private int currentPlayer;
-	private int currentBall;
-	// TODO: make this 10 when ready
-	private int framesPerGame = 3;
+	private int framesPerGame = 10;
 	private Text frameText;
-	private int numberOfPlayers;
-	private int numberOfGames;
+	private int numberOfPlayers = 1;
+	private int numberOfGames = 1;
+	private PinCounter pinCounter;
 	private PinSetter pinSetter;
-	private Animator pinSetterAnimator;
+	private List<string> playerNames = new List<string> {"Scott", "Derek", "Brent", "Amy"};
 	private int previousPinsKnockedDown;
+	private ResultPanel resultPanel;
 	private ScoreCard scoreCard;
+	private ScorePanel scorePanel;
 	private Text scoreText;
 
 	// Use this for initialization
 	void Start () {
-		ball = GameObject.FindObjectOfType<Ball>();
-		ballText = GameObject.Find("Ball Text").GetComponent<Text>();
-		frameText = GameObject.Find("Frame Text").GetComponent<Text>();
+		ballMaster = GameObject.FindObjectOfType<BallMaster>();
+		pinCounter = GameObject.FindObjectOfType<PinCounter>();
 		pinSetter = GameObject.FindObjectOfType<PinSetter>();
-		pinSetterAnimator = pinSetter.GetComponent<Animator>();
-		scoreCard = GameObject.FindObjectOfType<ScoreCard>();
-		scoreText = GameObject.Find("Score Text").GetComponent<Text>();
-		//TODO: get number of players/games some other way
-		numberOfPlayers = 1;
-		numberOfGames = 1;
+		resultPanel = GameObject.FindObjectOfType<ResultPanel>();
+		scoreCard = new ScoreCard();
+		scoreCard.SetResultPanel(resultPanel);
+		scorePanel = GameObject.FindObjectOfType<ScorePanel>();
 		StartSeries();
 	}
 
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
 	public void FinishTurn() {
-		// TODO: calculate score
-		// TODO: special case for the 10th frame
-		int pinsKnockedDown = 10 - pinSetter.CountStandingPins() - previousPinsKnockedDown;
-		previousPinsKnockedDown = 10 - pinSetter.CountStandingPins();
-/* TODO: remove
-		scoreCard.UpdateScore(currentPlayer, currentGame, currentFrame, currentBall, pinsKnockedDown);
-*/
+		ScoreCard.Action action;
 
-		// If it's currently the first turn, check for a strike; if it's not, just go to the next turn
-		if (currentBall == 1) {
-			// TODO: check for a strike
+		int pinsKnockedDown = 10 - pinCounter.CountStandingPins() - previousPinsKnockedDown;
 
-			currentBall++;
-			pinSetterAnimator.SetTrigger("tidy");
-			ball.Reset();
-			UpdateDisplay();
+		action = scoreCard.Bowl(pinsKnockedDown);
+		switch (action) {
+			case ScoreCard.Action.Tidy:
+					previousPinsKnockedDown = pinsKnockedDown;
+					pinSetter.Tidy();
+					ballMaster.Reset();
+				break;
+			case ScoreCard.Action.Reset:
+					previousPinsKnockedDown = 0;
+					pinSetter.Reset();
+					ballMaster.Reset();
+				break;
+			case ScoreCard.Action.EndTurn:
+					StartFrame();
+					ballMaster.Reset();
+				break;
+			case ScoreCard.Action.EndGame:
+					StartGame();
+					ballMaster.Reset();
+				break;
+			case ScoreCard.Action.EndSeries:
+					// Disable the game starting ?
+					ballMaster.Reset();
+			
+					// Get the winner's name, and winning score -- if it's a one player game, don't report that they won, just their total
+					resultPanel.EndSeries(scoreCard);
+				break;
 		}
-		else {
-			currentBall--;
-			currentFrame++;
-			currentPlayer++;
-			if (currentPlayer > numberOfPlayers) {
-				currentPlayer = 1;
-			}
-			StartFrame();
-		}
+		scorePanel.UpdateScores(scoreCard);
 	}
 
 	public bool GetBallCanBeRolled() {
 		return ballCanBeRolled;
+	}
+
+	public void ReturnToMainMenu() {
+		SceneManager.LoadScene(0);
+	}
+
+	public void SetNumberOfGames(int numberOfGames) {
+		this.numberOfGames = numberOfGames;
+	}
+
+	public void SetNumberOfPlayers(int numberOfPlayers) {
+		this.numberOfPlayers = numberOfPlayers;
+	}
+
+	public void StartSeries() {
+		// Pull the values from the player prefs
+		SetNumberOfPlayers(PlayerPrefs.GetInt(NUMBER_OF_PLAYERS));
+		SetNumberOfGames(PlayerPrefs.GetInt(NUMBER_OF_GAMES));
+
+		// Initialize the scoreCard object, which contains all of the information about the series (games, players, scores, etc.)
+		this.scoreCard.Initialize(numberOfPlayers, numberOfGames, framesPerGame, playerNames);
+		this.scorePanel.Initialize(numberOfPlayers, numberOfGames, framesPerGame, playerNames);
+		
+		StartGame();
 	}
 
 	public void UpdateBallRollableStatus(bool canBeRolled) {
@@ -81,28 +118,14 @@ public class GameManager : MonoBehaviour {
 
 	private void StartFrame() {
 		previousPinsKnockedDown = 0;
-		pinSetterAnimator.SetTrigger("reset");
-		ball.Reset();
-		UpdateDisplay();
+		pinSetter.Reset();
+		ballMaster.Reset();
+		scorePanel.UpdateScores(scoreCard);
 	}
 
 	private void StartGame() {
-		currentPlayer = 1;
-		currentBall = 1;
-		currentFrame = 1;
+		scorePanel.StartNewGame(scoreCard);
 		StartFrame();
 	}
 
-	private void StartSeries() {
-		// Initialize the scoreCard object, which contains all of the information about the series (games, players, scores, etc.)
-		scoreCard.Initialize(numberOfPlayers, numberOfGames, framesPerGame);
-		currentGame = 1;
-		StartGame();
-	}
-
-	private void UpdateDisplay() {
-		frameText.text = currentFrame.ToString();
-		ballText.text = currentBall.ToString();
-		scoreText.text = "2";
-	}
 }

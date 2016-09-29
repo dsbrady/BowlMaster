@@ -31,3 +31,5 @@
 /Users/scott/Documents/gameDevelopment/repos/unityCourse/BowlMaster/Temp/bin/Debug/Unity.CecilTools.dll
 /Users/scott/Documents/gameDevelopment/repos/unityCourse/BowlMaster/Temp/bin/Debug/Mono.Cecil.Pdb.dll
 /Users/scott/Documents/gameDevelopment/repos/unityCourse/BowlMaster/Temp/bin/Debug/Mono.Cecil.Mdb.dll
+/Users/scott/Documents/gameDevelopment/repos/unityCourse/BowlMaster/Temp/bin/Debug/UnityEditor.iOS.Extensions.Xcode.dll.mdb
+/Users/scott/Documents/gameDevelopment/repos/unityCourse/BowlMaster/Temp/bin/Debug/UnityEditor.iOS.Extensions.Common.dll.mdb
